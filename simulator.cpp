@@ -270,11 +270,7 @@ void MIPSSimulator::preprocess()
 		}	
 	}
 	sort(Memory.begin(),Memory.end(),sortmemory);
-/*	for(i=0;i<Memory.size();i++)
-	{
-		cout<<"L: "<<Memory[i].label<<endl;
-	}*/
-	for(i=0;i<Memory.size()-1;i++)
+	for(i=0;Memory.size()>0 && i<Memory.size()-1;i++)
 	{
 		if(Memory[i].label==Memory[i+1].label)
 		{			
@@ -370,10 +366,6 @@ void MIPSSimulator::preprocess()
 		}
 	}
 	sort(TableOfLabels.begin(),TableOfLabels.end(),sorttable);
-	/*for(i=0;i<TableOfLabels.size();i++)
-	{
-		cout<<"L2: "<<TableOfLabels[i].label<<endl;
-	}*/
 	for(i=0;TableOfLabels.size()>0 && i<(TableOfLabels.size()-1);i++)
 	{
 		if(TableOfLabels[i].label==TableOfLabels[i+1].label)
@@ -394,7 +386,7 @@ void MIPSSimulator::preprocess()
 }
 void MIPSSimulator::ReportError()
 {
-	cout<<"Error found in Instruction "<<ProgramCounter<<endl;
+	cout<<"Error found in instruction at address"<<(4*ProgramCounter)<<endl;
 	displayState();
 	exit(1);
 }
@@ -872,10 +864,6 @@ void MIPSSimulator::displayState()
 	{
 		printf("%10s:%8d\n",Memory[i].label.c_str(),Memory[i].value);
 	}
-	/*for(int i=0;i<TableOfLabels.size();i++)
-	{
-		cout<<"L: "<<TableOfLabels[i].label<<" A: "<<TableOfLabels[i].address<<endl;
-	}*/
 	cout<<endl;
 }
 void MIPSSimulator::assertNumber(string str)
