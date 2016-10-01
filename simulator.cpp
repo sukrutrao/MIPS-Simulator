@@ -190,6 +190,7 @@ void MIPSSimulator::preprocess()
 		}
 		else if(flag==1)
 		{
+			cout<<"Error: Multiple instances of .data"<<endl;
 			ReportError();
 		}
 	}
@@ -209,6 +210,7 @@ void MIPSSimulator::preprocess()
 			{
 				if(current_instruction.find(".globl main")==-1 && current_instruction.find(".text")==-1)
 				{
+					cout<<"Error: Unexpected symbol in data section"<<endl;
 					ReportError();
 				}
 				else
@@ -218,6 +220,7 @@ void MIPSSimulator::preprocess()
 			}
 			if(LabelIndex==0)
 			{
+				cout<<"Error: Label name expected"<<endl;
 				ReportError();
 			}
 			tempString="";
@@ -232,10 +235,12 @@ void MIPSSimulator::preprocess()
 				}
 				else if(current_instruction[j]!=' ' && doneFlag==1)
 				{
+					cout<<"Error: Unexpected text before label name"<<endl;
 					ReportError();
 				}
 				else if(isLabel==0)
 				{
+					cout<<"Error: Label name expected"<<endl;
 					ReportError();
 				}
 				else
@@ -249,6 +254,7 @@ void MIPSSimulator::preprocess()
 			int wordIndex=current_instruction.find(".word"); //only .word supported as of now
 			if(wordIndex==-1)
 			{
+				cout<<"Error: .word not found"<<endl;
 				ReportError();
 			}
 			OnlySpaces(LabelIndex+1,wordIndex,current_instruction);
@@ -263,6 +269,7 @@ void MIPSSimulator::preprocess()
 				}
 				else if(foundValue==1 && current_instruction[j]!=' ' && doneFinding==1)
 				{
+					cout<<"Error: Unexpected text after value"<<endl;
 					ReportError();
 				}
 				else if(foundValue==0 && current_instruction[j]!=' ')
@@ -313,6 +320,7 @@ void MIPSSimulator::preprocess()
 		}
 		else if(textFlag==1)
 		{
+			cout<<"Error: Multiple instances of .text"<<endl;
 			ReportError();
 		}
 	}
@@ -334,6 +342,7 @@ void MIPSSimulator::preprocess()
 		LabelIndex=current_instruction.find(":");
 		if(LabelIndex==0)
 		{
+			cout<<"Error: Label name expected"<<endl;
 			ReportError();
 		}
 		if(LabelIndex==-1)
@@ -352,10 +361,12 @@ void MIPSSimulator::preprocess()
 			}
 			else if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==1)
 			{
+				cout<<"Error: Unexpected text before label name"<<endl;
 				ReportError();
 			}
 			else if(isLabel==0)
 			{
+				cout<<"Error: Label name expected"<<endl;
 				ReportError();
 			}
 			else
@@ -421,6 +432,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	if(current_instruction.size()<4)
 	{
+		cout<<"Error: Unknown operation"<<endl;
 		ReportError();
 	}
 	for(j=0;j<4;j++)
@@ -447,6 +459,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	if(OperationID==-1)
 	{
+		cout<<"Error: Unknown operation"<<endl;
 		ReportError();
 	}
 	if(OperationID<7)
@@ -464,6 +477,7 @@ int MIPSSimulator::ParseInstruction()
 		}
 		if(current_instruction!="")
 		{
+			cout<<"Error: Too few arguments provided"<<endl;
 			ReportError();
 		}
 	}
@@ -500,6 +514,7 @@ int MIPSSimulator::ParseInstruction()
 			}
 			if(j==current_instruction.size())
 			{
+				cout<<"Error: '(' expected"<<endl;
 				ReportError();
 			}
 			assertNumber(tempString);
@@ -508,24 +523,28 @@ int MIPSSimulator::ParseInstruction()
 			RemoveSpaces(current_instruction);
 			if(current_instruction=="" || current_instruction[0]!='(')
 			{
+				cout<<"Error: '(' expected"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
 			RemoveSpaces(current_instruction);
 			if(current_instruction[0]!='$')
 			{
+				cout<<"Error: Register expected"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
 			string confirmRegister=current_instruction.substr(0,2);
 			if(confirmRegister!=Registers[29])//only $sp supported for now
 			{
+				cout<<"Error: Can use offset only with stack pointer"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(2);
 			RemoveSpaces(current_instruction);
 			if(current_instruction=="" || current_instruction[0]!=')')
 			{
+				cout<<"Error: ')' expected"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
@@ -556,6 +575,7 @@ int MIPSSimulator::ParseInstruction()
 			}
 			if(foundLocation==0)
 			{
+				cout<<"Error: Invalid label"<<endl;
 				ReportError();
 			}
 			r[2]=-1;
@@ -584,6 +604,7 @@ int MIPSSimulator::ParseInstruction()
 		}
 		if(foundAddress==0)
 		{
+			cout<<"Error: Invalid label"<<endl;
 			ReportError();
 		}
 	}
@@ -611,6 +632,7 @@ void MIPSSimulator::OnlySpaces(int lower, int upper, string str)
 	{
 		if(str[i]!=' ')
 		{
+			cout<<"Error: Unexpected character"<<endl;
 			ReportError();
 		}
 	}
@@ -695,6 +717,7 @@ void MIPSSimulator::add()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -710,6 +733,7 @@ void MIPSSimulator::addi()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -725,6 +749,7 @@ void MIPSSimulator::sub()//Overflow check to be done?
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -740,6 +765,7 @@ void MIPSSimulator::mul()//last 32 bits?
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -755,6 +781,7 @@ void MIPSSimulator::andf()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -770,6 +797,7 @@ void MIPSSimulator::andi()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -785,6 +813,7 @@ void MIPSSimulator::orf()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -800,6 +829,7 @@ void MIPSSimulator::ori()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -815,6 +845,7 @@ void MIPSSimulator::nor()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -834,6 +865,7 @@ void MIPSSimulator::slt()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -853,6 +885,7 @@ void MIPSSimulator::slti()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -873,6 +906,7 @@ void MIPSSimulator::lw()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -889,6 +923,7 @@ void MIPSSimulator::sw()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -907,6 +942,7 @@ void MIPSSimulator::beq()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -925,6 +961,7 @@ void MIPSSimulator::bne()
 	}
 	else
 	{
+		cout<<"Error: Invalid usage of registers"<<endl;
 		ReportError();
 	}
 }
@@ -964,6 +1001,7 @@ void MIPSSimulator::assertNumber(string str)
 	{
 		if(str[j]<48 && str[j]>57)
 		{
+			cout<<"Error: Specified value is not a number"<<endl;
 			ReportError();
 		}
 	}
@@ -978,6 +1016,7 @@ void MIPSSimulator::findRegister(int number)
 	int foundRegister=0;
 	if(current_instruction[0]!='$')
 	{
+		cout<<"Error: Register expected"<<endl;
 		ReportError();
 	}
 	current_instruction=current_instruction.substr(1);
@@ -1000,6 +1039,7 @@ void MIPSSimulator::findRegister(int number)
 	}
 	if(foundRegister==0)
 	{
+		cout<<"Error: Invalid register"<<endl;
 		ReportError();
 	}
 }
@@ -1016,6 +1056,7 @@ string MIPSSimulator::findLabel()
 		}
 		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFinding==1)
 		{
+			cout<<"Error: Unexpected text after value"<<endl;
 			ReportError();
 		}
 		else if(foundValue==0 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
@@ -1034,6 +1075,7 @@ void MIPSSimulator::assertRemoveComma()
 {
 	if(current_instruction[0]!=',')
 	{
+		cout<<"Error: Comma expected"<<endl;
 		ReportError();
 	}
 	current_instruction=current_instruction.substr(1);
