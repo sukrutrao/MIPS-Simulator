@@ -18,7 +18,7 @@ struct LabelTable
 struct MemoryElement
 {
 	int value;
-    string label; 
+  string label; 
 };
 class MIPSSimulator
 {
@@ -68,8 +68,8 @@ class MIPSSimulator
 		void checkStackBounds(int index);
 
 	public:
-		MIPSSimulator(int mode, string fileName);		
-		void Execute();		
+		MIPSSimulator(int mode, string fileName);
+		void Execute();
 		void displayState();
 };
 int sorttable(LabelTable a, LabelTable b);
@@ -97,14 +97,14 @@ void MIPSSimulator::Execute()
 		{
 			displayState();
 			cin>>tempch;//see this later
-		}		
+		}
 	}
 	displayState();
 	if(halt_value==0)
 	{
 		cout<<"Error: Program ended without halt"<<endl;
 		exit(1);
-	}	
+	}
 }
 MIPSSimulator::MIPSSimulator(int mode, string fileName)
 {
@@ -113,7 +113,7 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 	ProgramCounter=0;
 	halt_value=0;
 	Memory.clear();
-	TableOfLabels.clear();	
+	TableOfLabels.clear();
 	string tempRegisters[]={"zero","at","v0","v1","a0","a1","a2","a3","t0","t1","t2","t3","t4","t5","t6",
 	"t7","s0","s1","s2","s3","s4","s5","s6","s7","t8","t9","k0","k1","gp","sp","s8","ra"};
 	for(int i=0;i<32;i++)
@@ -163,13 +163,13 @@ void MIPSSimulator::preprocess()
 	int index;
 	int commentindex;
 	int flag=0;
-	string tempString="";	
+	string tempString="";
 	int	isLabel=0;
 	int	doneFlag=0;
 	int dataStart=0;
 	int textStart=0;
 	for(i=0;i<NumberOfInstructions;i++)
-	{ 
+	{
 		ReadInstruction(i);
 		if(current_instruction=="")
 		{
@@ -185,8 +185,8 @@ void MIPSSimulator::preprocess()
 			flag=1;
 			OnlySpaces(0,index,current_instruction);
 			OnlySpaces(index+5,current_instruction.size(),current_instruction);
-			current_section=0;	
-			dataStart=i;		
+			current_section=0;
+			dataStart=i;
 		}
 		else if(flag==1)
 		{
@@ -203,8 +203,8 @@ void MIPSSimulator::preprocess()
 			if(current_instruction=="")
 			{
 				continue;
-			}	
-			LabelIndex=current_instruction.find(":");			
+			}
+			LabelIndex=current_instruction.find(":");
 			if(LabelIndex==-1)
 			{
 				if(current_instruction.find(".globl main")==-1 && current_instruction.find(".text")==-1)
@@ -219,8 +219,8 @@ void MIPSSimulator::preprocess()
 			if(LabelIndex==0)
 			{
 				ReportError();
-			}	
-			tempString="";	
+			}
+			tempString="";
 			int isLabel=0;
 			int doneFlag=0;
 			for(j=LabelIndex-1;j>=0;j--)
@@ -242,7 +242,7 @@ void MIPSSimulator::preprocess()
 				{
 					doneFlag=1;
 				}
-				
+
 			}//check if label has invalid characters to be done
 			MemoryElement tempMemory;
 			tempMemory.label=tempString;
@@ -264,7 +264,7 @@ void MIPSSimulator::preprocess()
 				else if(foundValue==1 && current_instruction[j]!=' ' && doneFinding==1)
 				{
 					ReportError();
-				}	
+				}
 				else if(foundValue==0 && current_instruction[j]!=' ')
 				{
 					foundValue=1;
@@ -273,18 +273,18 @@ void MIPSSimulator::preprocess()
 				else if(foundValue==1 && current_instruction[j]!=' ')
 				{
 					tempString=tempString+current_instruction[j];
-				}					
+				}
 			}
 			assertNumber(tempString);
 			tempMemory.value=stoi(tempString);
 	 		Memory.push_back(tempMemory);
-		}	
+		}
 	}
 	sort(Memory.begin(),Memory.end(),sortmemory);
 	for(i=0;Memory.size()>0 && i<Memory.size()-1;i++)
 	{
 		if(Memory[i].label==Memory[i+1].label)
-		{			
+		{
 			cout<<"Error: One or more labels are repeated"<<endl;
 			exit(1);
 		}
@@ -309,12 +309,12 @@ void MIPSSimulator::preprocess()
 			OnlySpaces(0,textIndex,current_instruction);
 			OnlySpaces(textIndex+5,current_instruction.size(),current_instruction);
 			current_section=1;
-			textStart=i;			
+			textStart=i;
 		}
 		else if(textFlag==1)
 		{
 			ReportError();
-		}		
+		}
 	}
 	if(current_section!=1)
 	{
@@ -340,7 +340,7 @@ void MIPSSimulator::preprocess()
 		{
 			continue;
 		}
-		tempString="";	
+		tempString="";
 		isLabel=0;
 		doneFlag=0;
 		for(j=LabelIndex-1;j>=0;j--)
@@ -394,7 +394,7 @@ void MIPSSimulator::preprocess()
 	ProgramCounter=MainIndex;
 	cout<<"Initialized and ready to execute. Current state is as follows:"<<endl;
 	displayState();
-	cout<<"Starting execution"<<endl;	
+	cout<<"Starting execution"<<endl;
 }
 void MIPSSimulator::ReportError()
 {
@@ -434,7 +434,7 @@ int MIPSSimulator::ParseInstruction()
 	if(j<current_instruction.size()-1)
 	{
 		current_instruction=current_instruction.substr(j+1);
-	}	
+	}
 	int foundOp=0;
 	int OperationID=-1;
 	for(i=0;i<17;i++)
@@ -465,7 +465,7 @@ int MIPSSimulator::ParseInstruction()
 		if(current_instruction!="")
 		{
 			ReportError();
-		}		
+		}
 	}
 	else if(OperationID<11)
 	{
@@ -479,7 +479,7 @@ int MIPSSimulator::ParseInstruction()
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel();
 		assertNumber(tempString);
-		r[2]=stoi(tempString);	
+		r[2]=stoi(tempString);
 	}
 	else if(OperationID<13)
 	{
@@ -539,7 +539,7 @@ int MIPSSimulator::ParseInstruction()
 			int foundLocation=0;
 			for(j=0;j<Memory.size();j++)
 			{
-				
+
 				if(tempString==Memory[j].label)
 				{
 					foundLocation=1;
@@ -557,9 +557,9 @@ int MIPSSimulator::ParseInstruction()
 			if(foundLocation==0)
 			{
 				ReportError();
-			}	
+			}
 			r[2]=-1;
-		}		
+		}
 	}
 	else if(OperationID<15)
 	{
@@ -585,7 +585,7 @@ int MIPSSimulator::ParseInstruction()
 		if(foundAddress==0)
 		{
 			ReportError();
-		}	
+		}
 	}
 	else if(OperationID==15)
 	{
@@ -597,7 +597,7 @@ int MIPSSimulator::ParseInstruction()
 			{
 				r[0]=TableOfLabels[j].address;
 			}
-		}	
+		}
 	}
 	else if(OperationID==16)
 	{
@@ -830,7 +830,7 @@ void MIPSSimulator::slt()
 		{
 			RegisterValues[r[0]]=0;
 		}
-		
+
 	}
 	else
 	{
@@ -849,7 +849,7 @@ void MIPSSimulator::slti()
 		{
 			RegisterValues[r[0]]=0;
 		}
-		
+
 	}
 	else
 	{
@@ -874,7 +874,7 @@ void MIPSSimulator::lw()
 	else
 	{
 		ReportError();
-	}	
+	}
 }
 void MIPSSimulator::sw()
 {
@@ -890,7 +890,7 @@ void MIPSSimulator::sw()
 	else
 	{
 		ReportError();
-	}	
+	}
 }
 void MIPSSimulator::beq()
 {
@@ -926,7 +926,7 @@ void MIPSSimulator::bne()
 	else
 	{
 		ReportError();
-	}	
+	}
 }
 void MIPSSimulator::j()
 {
@@ -979,7 +979,7 @@ void MIPSSimulator::findRegister(int number)
 	string registerID=current_instruction.substr(0,2);
 	if(registerID=="ze")
 	{
-		registerID+=current_instruction.substr(2,2);			
+		registerID+=current_instruction.substr(2,2);
 	}
 	for(int i=0;i<32;i++)
 	{
@@ -991,7 +991,7 @@ void MIPSSimulator::findRegister(int number)
 				current_instruction=current_instruction.substr(2);
 			else
 				current_instruction=current_instruction.substr(4);
-		}				
+		}
 	}
 	if(foundRegister==0)
 	{
@@ -1012,7 +1012,7 @@ string MIPSSimulator::findLabel()
 		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFinding==1)
 		{
 			ReportError();
-		}	
+		}
 		else if(foundValue==0 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 		{
 			foundValue=1;
@@ -1021,7 +1021,7 @@ string MIPSSimulator::findLabel()
 		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 		{
 			tempString=tempString+current_instruction[j];
-		}					
+		}
 	}
 	return tempString;
 }
