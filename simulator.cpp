@@ -32,6 +32,7 @@ class MIPSSimulator
 		int r[3];
 		vector<struct LabelTable> TableOfLabels;
 		vector<struct MemoryElement> Memory;
+		int Stack[100];
 		void add();
 		void addi();
 		void sub();
@@ -60,6 +61,7 @@ class MIPSSimulator
 		void findRegister(int number);
 		string findLabel();
 		void assertComma();
+		void checkStackBounds(int index);
 
 	public:
 		MIPSSimulator(int mode, string fileName);		
@@ -124,6 +126,11 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 	{
 		InstructionSet[i]=tempInstructionSet[i];
 	}
+	for(int i=0;i<100;i++)
+	{
+		Stack[i]=0;
+	}
+	RegisterValues[29]=396;
 	Mode=mode;
 	ifstream InputFile;
 	InputFile.open(fileName.c_str(),ios::in);
@@ -531,29 +538,7 @@ int MIPSSimulator::ParseInstruction()
 	else if(OperationID==15)
 	{
 		RemoveSpaces(current_instruction);
-		string tempString="";
-		int foundValue=0;
-		int doneFinding=0;
-		for(j=0;j<current_instruction.size();j++)
-		{
-			if(foundValue==1 && current_instruction[j]==' ' && doneFinding==0)
-			{
-				doneFinding=1;
-			}
-			else if(foundValue==1 && current_instruction[j]!=' ' && doneFinding==1)
-			{
-				ReportError();
-			}	
-			else if(foundValue==0 && current_instruction[j]!=' ')
-			{
-				foundValue=1;
-				tempString=tempString+current_instruction[j];
-			}
-			else if(foundValue==1 && current_instruction[j]!=' ')
-			{
-				tempString=tempString+current_instruction[j];
-			}					
-		}
+		string tempString=findLabel();
 		for(j=0;j<TableOfLabels.size();j++)
 		{
 			if(tempString==TableOfLabels[j].label)
@@ -648,6 +633,10 @@ void MIPSSimulator::RemoveSpaces(string &str)
 }
 void MIPSSimulator::add()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]+RegisterValues[r[2]]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]+RegisterValues[r[2]];
@@ -659,6 +648,10 @@ void MIPSSimulator::add()
 }
 void MIPSSimulator::addi()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]+r[2]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]+r[2];
@@ -670,6 +663,10 @@ void MIPSSimulator::addi()
 }
 void MIPSSimulator::sub()//Overflow check to be done?
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]-RegisterValues[r[2]]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]-RegisterValues[r[2]];
@@ -681,6 +678,10 @@ void MIPSSimulator::sub()//Overflow check to be done?
 }
 void MIPSSimulator::mul()//last 32 bits?
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]*RegisterValues[r[2]]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]*RegisterValues[r[2]];
@@ -692,6 +693,10 @@ void MIPSSimulator::mul()//last 32 bits?
 }
 void MIPSSimulator::andf()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]&RegisterValues[r[2]]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]&RegisterValues[r[2]];
@@ -703,6 +708,10 @@ void MIPSSimulator::andf()
 }
 void MIPSSimulator::andi()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]&r[2]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]&r[2];
@@ -714,6 +723,10 @@ void MIPSSimulator::andi()
 }
 void MIPSSimulator::orf()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]|RegisterValues[r[2]]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]|RegisterValues[r[2]];
@@ -725,6 +738,10 @@ void MIPSSimulator::orf()
 }
 void MIPSSimulator::ori()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(RegisterValues[r[1]]|r[2]);
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]|r[2];
@@ -736,6 +753,10 @@ void MIPSSimulator::ori()
 }
 void MIPSSimulator::nor()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(~(RegisterValues[r[1]]|RegisterValues[r[2]]));
+	}
 	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
 	{
 		RegisterValues[r[0]]=~(RegisterValues[r[1]]|RegisterValues[r[2]]);
@@ -785,6 +806,10 @@ void MIPSSimulator::slti()
 }
 void MIPSSimulator::lw()
 {
+	if(r[0]==29)
+	{
+		checkStackBounds(r[1]);
+	}
 	if(r[0]!=0 && r[0]!=1)
 	{
 		RegisterValues[r[0]]=r[1];
@@ -937,6 +962,14 @@ void MIPSSimulator::assertComma()
 {
 	if(current_instruction[0]!=',')
 	{
+		ReportError();
+	}
+}
+void MIPSSimulator::checkStackBounds(int index)
+{
+	if(!(index<=396 && index>=0 && index%4==0))
+	{
+		cout<<"Error: Stack pointer given invalid value"<<endl;
 		ReportError();
 	}
 }
