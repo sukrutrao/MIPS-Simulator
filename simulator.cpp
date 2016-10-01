@@ -1,4 +1,5 @@
 //As of now no instructions can be there on lines containing labels
+//check all substrs
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -60,7 +61,7 @@ class MIPSSimulator
 		void assertNumber(string str);
 		void findRegister(int number);
 		string findLabel();
-		void assertComma();
+		void assertRemoveComma();
 		void checkStackBounds(int index);
 
 	public:
@@ -179,8 +180,8 @@ void MIPSSimulator::preprocess()
 		else if(flag==0)
 		{
 			flag=1;
-			OnlySpaces(0,index-1,current_instruction);
-			OnlySpaces(index+5,current_instruction.size()-1,current_instruction);
+			OnlySpaces(0,index,current_instruction);
+			OnlySpaces(index+5,current_instruction.size(),current_instruction);
 			current_section=0;	
 			dataStart=i;		
 		}
@@ -247,7 +248,7 @@ void MIPSSimulator::preprocess()
 			{
 				ReportError();
 			}
-			OnlySpaces(LabelIndex+1,wordIndex-1,current_instruction);
+			OnlySpaces(LabelIndex+1,wordIndex,current_instruction);
 			int foundValue=0;
 			int doneFinding=0;
 			tempString="";
@@ -302,8 +303,8 @@ void MIPSSimulator::preprocess()
 		else if(textFlag==0)
 		{
 			textFlag=1;
-			OnlySpaces(0,index-1,current_instruction);
-			OnlySpaces(index+5,current_instruction.size()-1,current_instruction);
+			OnlySpaces(0,textIndex,current_instruction);
+			OnlySpaces(textIndex+5,current_instruction.size(),current_instruction);
 			current_section=1;
 			textStart=i;			
 		}
@@ -427,7 +428,9 @@ int MIPSSimulator::ParseInstruction()
 	}
 	string operation=current_instruction.substr(0,j);
 	if(j<current_instruction.size()-1)
-	current_instruction=current_instruction.substr(j+1);
+	{
+		current_instruction=current_instruction.substr(j+1);
+	}	
 	int foundOp=0;
 	int OperationID=-1;
 	for(i=0;i<17;i++)
@@ -453,8 +456,7 @@ int MIPSSimulator::ParseInstruction()
 			{
 				break;
 			}
-			assertComma();
-			current_instruction=current_instruction.substr(1);
+			assertRemoveComma();
 		}
 		if(current_instruction!="")
 		{
@@ -468,8 +470,7 @@ int MIPSSimulator::ParseInstruction()
 			RemoveSpaces(current_instruction);
 			findRegister(count);
 			RemoveSpaces(current_instruction);
-			assertComma();
-			current_instruction=current_instruction.substr(1);
+			assertRemoveComma();
 		}
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel();
@@ -478,35 +479,90 @@ int MIPSSimulator::ParseInstruction()
 	}
 	else if(OperationID<13)
 	{
+		string tempString="";
+		int offset;
 		RemoveSpaces(current_instruction);
 		findRegister(0);
 		RemoveSpaces(current_instruction);
-		assertComma();
-		current_instruction=current_instruction.substr(1);
+		assertRemoveComma();
 		RemoveSpaces(current_instruction);
-		string tempString=findLabel();
-		int foundLocation=0;
-		for(j=0;j<Memory.size();j++)
+		if((current_instruction[0]>47 && current_instruction[0]<58) || current_instruction[0]=='-')
 		{
-			
-			if(tempString==Memory[j].label)
+			j=0;
+			while(j<current_instruction.size() && current_instruction[j]!=' ' && current_instruction[j]!='(')
 			{
-				foundLocation=1;
-				if(OperationID==11)
-				{
-					r[1]=Memory[j].value;
-				}
-				else
-				{
-					r[1]=j;
-				}
-				break;
+				tempString=tempString+current_instruction[j];
+				j++;
 			}
+			cout<<"X"<<endl;
+			if(j==current_instruction.size())
+			{
+				ReportError();
+			}
+			assertNumber(tempString);
+			offset=stoi(tempString);
+			current_instruction=current_instruction.substr(j);
+			RemoveSpaces(current_instruction);
+			cout<<"Y"<<endl;
+			if(current_instruction=="" || current_instruction[0]!='(')
+			{
+				cout<<"Q"<<" "<<current_instruction<<"W"<<endl;
+				ReportError();
+			}
+			current_instruction=current_instruction.substr(1);
+			RemoveSpaces(current_instruction);
+			if(current_instruction[0]!='$')
+			{
+				ReportError();
+			}
+			current_instruction=current_instruction.substr(1);
+			cout<<"Z"<<endl;
+			string confirmRegister=current_instruction.substr(0,2);
+			if(confirmRegister!=Registers[29])//only $sp supported for now
+			{
+				cout<<"R"<<confirmRegister<<"T"<<endl;
+				ReportError();
+			}
+			cout<<"E"<<endl;
+			current_instruction=current_instruction.substr(2);
+			RemoveSpaces(current_instruction);
+			if(current_instruction=="" || current_instruction[0]!=')')
+			{
+				ReportError();
+			}
+			current_instruction=current_instruction.substr(1);
+			OnlySpaces(0,current_instruction.size(),current_instruction);
+			r[1]=29;
+			r[2]=offset;
+			cout<<"A"<<endl;
 		}
-		if(foundLocation==0)
+		else
 		{
-			ReportError();
-		}	
+			tempString=findLabel();
+			int foundLocation=0;
+			for(j=0;j<Memory.size();j++)
+			{
+				
+				if(tempString==Memory[j].label)
+				{
+					foundLocation=1;
+					if(OperationID==11)
+					{
+						r[1]=Memory[j].value;
+					}
+					else
+					{
+						r[1]=j;
+					}
+					break;
+				}
+			}
+			if(foundLocation==0)
+			{
+				ReportError();
+			}	
+			r[2]=-1;
+		}		
 	}
 	else if(OperationID<15)
 	{
@@ -515,8 +571,7 @@ int MIPSSimulator::ParseInstruction()
 			RemoveSpaces(current_instruction);
 			findRegister(count);
 			RemoveSpaces(current_instruction);
-			assertComma();
-			current_instruction=current_instruction.substr(1);
+			assertRemoveComma();
 		}
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel();
@@ -810,9 +865,14 @@ void MIPSSimulator::lw()
 	{
 		checkStackBounds(r[1]);
 	}
-	if(r[0]!=0 && r[0]!=1)
+	if(r[0]!=0 && r[0]!=1 && r[2]==-1)
 	{
 		RegisterValues[r[0]]=r[1];
+	}
+	else if(r[0]!=0 && r[0]!=1)
+	{
+		checkStackBounds(RegisterValues[r[1]]+r[2]);
+		RegisterValues[r[0]]=Stack[(RegisterValues[r[1]]+r[2])/4];
 	}
 	else
 	{
@@ -821,9 +881,14 @@ void MIPSSimulator::lw()
 }
 void MIPSSimulator::sw()
 {
-	if(r[0]!=1)
+	if(r[0]!=1 && r[2]==-1)
 	{
 		Memory[r[1]].value=RegisterValues[r[0]];
+	}
+	else if(r[0]!=1)
+	{
+		checkStackBounds(RegisterValues[r[1]]+r[2]);
+		Stack[(RegisterValues[r[1]]+r[2])/4]=RegisterValues[r[0]];
 	}
 	else
 	{
@@ -888,6 +953,11 @@ void MIPSSimulator::displayState()
 	for(int i=0;i<Memory.size();i++)
 	{
 		printf("%10s:%8d\n",Memory[i].label.c_str(),Memory[i].value);
+	}
+	cout<<endl<<"Stack:"<<endl<<endl;
+	for(int i=0;i<100;i++)
+	{
+		cout<<(4*i)<<" "<<Stack[i]<<endl;
 	}
 	cout<<endl;
 }
@@ -958,12 +1028,13 @@ string MIPSSimulator::findLabel()
 	}
 	return tempString;
 }
-void MIPSSimulator::assertComma()
+void MIPSSimulator::assertRemoveComma()
 {
 	if(current_instruction[0]!=',')
 	{
 		ReportError();
 	}
+	current_instruction=current_instruction.substr(1);
 }
 void MIPSSimulator::checkStackBounds(int index)
 {
