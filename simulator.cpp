@@ -327,7 +327,6 @@ void MIPSSimulator::preprocess()
 	for(i=textStart+1;i<NumberOfInstructions;i++)
 	{
 		ReadInstruction(i);
-		cout<<"c: "<<current_instruction<<endl;
 		if(current_instruction=="")
 		{
 			continue;
@@ -344,7 +343,6 @@ void MIPSSimulator::preprocess()
 		tempString="";	
 		isLabel=0;
 		doneFlag=0;
-		cout<<"A"<<endl;
 		for(j=LabelIndex-1;j>=0;j--)
 		{
 			if(current_instruction[j]!=' ' && doneFlag==0)
@@ -354,12 +352,10 @@ void MIPSSimulator::preprocess()
 			}
 			else if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==1)
 			{
-				cout<<"X: "<<j<<endl;
 				ReportError();
 			}
 			else if(isLabel==0)
 			{
-				cout<<"Y"<<endl;
 				ReportError();
 			}
 			else
@@ -451,7 +447,6 @@ int MIPSSimulator::ParseInstruction()
 	}
 	if(OperationID==-1)
 	{
-		cout<<"NF"<<endl;
 		ReportError();
 	}
 	if(OperationID<7)
@@ -474,7 +469,6 @@ int MIPSSimulator::ParseInstruction()
 	}
 	else if(OperationID<11)
 	{
-		cout<<"INIF"<<endl;
 		for(int count=0;count<2;count++)
 		{
 			RemoveSpaces(current_instruction);
@@ -483,9 +477,7 @@ int MIPSSimulator::ParseInstruction()
 			assertRemoveComma();
 		}
 		RemoveSpaces(current_instruction);
-		cout<<"BFL"<<endl;
 		string tempString=findLabel();
-		cout<<"FL"<<endl;
 		assertNumber(tempString);
 		r[2]=stoi(tempString);	
 	}
@@ -506,7 +498,6 @@ int MIPSSimulator::ParseInstruction()
 				tempString=tempString+current_instruction[j];
 				j++;
 			}
-			cout<<"X"<<endl;
 			if(j==current_instruction.size())
 			{
 				ReportError();
@@ -515,10 +506,8 @@ int MIPSSimulator::ParseInstruction()
 			offset=stoi(tempString);
 			current_instruction=current_instruction.substr(j);
 			RemoveSpaces(current_instruction);
-			cout<<"Y"<<endl;
 			if(current_instruction=="" || current_instruction[0]!='(')
 			{
-				cout<<"Q"<<" "<<current_instruction<<"W"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
@@ -528,14 +517,11 @@ int MIPSSimulator::ParseInstruction()
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
-			cout<<"Z"<<endl;
 			string confirmRegister=current_instruction.substr(0,2);
 			if(confirmRegister!=Registers[29])//only $sp supported for now
 			{
-				cout<<"R"<<confirmRegister<<"T"<<endl;
 				ReportError();
 			}
-			cout<<"E"<<endl;
 			current_instruction=current_instruction.substr(2);
 			RemoveSpaces(current_instruction);
 			if(current_instruction=="" || current_instruction[0]!=')')
@@ -546,7 +532,6 @@ int MIPSSimulator::ParseInstruction()
 			OnlySpaces(0,current_instruction.size(),current_instruction);
 			r[1]=29;
 			r[2]=offset;
-			cout<<"A"<<endl;
 		}
 		else
 		{
@@ -585,11 +570,9 @@ int MIPSSimulator::ParseInstruction()
 			RemoveSpaces(current_instruction);
 			assertRemoveComma();
 		}
-		cout<<"REG"<<endl;
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel();
 		int foundAddress=0;
-		cout<<"FOUNDL:"<<tempString<<"T"<<endl;
 		for(j=0;j<TableOfLabels.size();j++)
 		{
 			if(tempString==TableOfLabels[j].label)
@@ -702,7 +685,6 @@ void MIPSSimulator::RemoveSpaces(string &str)
 }
 void MIPSSimulator::add()
 {
-	cout<<"ADD"<<endl;
 	if(r[0]==29)
 	{
 		checkStackBounds(RegisterValues[r[1]]+RegisterValues[r[2]]);
@@ -715,11 +697,9 @@ void MIPSSimulator::add()
 	{
 		ReportError();
 	}
-	cout<<"LEA"<<endl;
 }
 void MIPSSimulator::addi()
 {
-	cout<<"ADDI"<<endl;
 	if(r[0]==29)
 	{
 		checkStackBounds(RegisterValues[r[1]]+r[2]);
@@ -730,10 +710,8 @@ void MIPSSimulator::addi()
 	}
 	else
 	{
-		cout<<"RE"<<endl;
 		ReportError();
 	}
-	cout<<"LEAI"<<endl;
 }
 void MIPSSimulator::sub()//Overflow check to be done?
 {
@@ -816,7 +794,7 @@ void MIPSSimulator::ori()
 	{
 		checkStackBounds(RegisterValues[r[1]]|r[2]);
 	}
-	if(r[0]!=0 && r[0]!=1 && r[1]!=1 && r[2]!=1)
+	if(r[0]!=0 && r[0]!=1 && r[1]!=1)
 	{
 		RegisterValues[r[0]]=RegisterValues[r[1]]|r[2];
 	}
@@ -934,7 +912,6 @@ void MIPSSimulator::beq()
 }
 void MIPSSimulator::bne()
 {
-	cout<<"BNE"<<endl;
 	if(r[0]!=1 && r[1]!=1)
 	{
 		if(RegisterValues[r[0]]!=RegisterValues[r[1]])
@@ -983,7 +960,6 @@ void MIPSSimulator::displayState()
 }
 void MIPSSimulator::assertNumber(string str)
 {
-	cout<<"S: "<<str<<endl;
 	for(int j=0;j<str.size();j++)
 	{
 		if(str[j]<48 && str[j]>57)
@@ -1035,7 +1011,6 @@ string MIPSSimulator::findLabel()
 		}
 		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFinding==1)
 		{
-			cout<<"INFL: "<<j<<" "<<current_instruction[j]<<"T"<<tempString<<endl;
 			ReportError();
 		}	
 		else if(foundValue==0 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
