@@ -2,7 +2,7 @@
 //check all substrs
 //change maxxlength
 //\t apart from ' '
-//stoi out of range
+//stoi out of range - done
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -18,7 +18,7 @@ struct LabelTable
 struct MemoryElement
 {
 	int value;
-  string label; 
+  string label;
 };
 class MIPSSimulator
 {
@@ -966,6 +966,11 @@ void MIPSSimulator::assertNumber(string str)
 		{
 			ReportError();
 		}
+	}
+	if(str.size()>10 || (str.size()==10 && str>"2147483647"))
+	{
+		cout<<"Error: Number out of range"<<endl;
+		ReportError();
 	}
 }
 void MIPSSimulator::findRegister(int number)
