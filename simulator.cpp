@@ -1,5 +1,8 @@
 //As of now no instructions can be there on lines containing labels
 //check all substrs
+//change maxxlength
+//\t apart from ' '
+//stoi out of range
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -324,6 +327,7 @@ void MIPSSimulator::preprocess()
 	for(i=textStart+1;i<NumberOfInstructions;i++)
 	{
 		ReadInstruction(i);
+		cout<<"c: "<<current_instruction<<endl;
 		if(current_instruction=="")
 		{
 			continue;
@@ -340,6 +344,7 @@ void MIPSSimulator::preprocess()
 		tempString="";	
 		isLabel=0;
 		doneFlag=0;
+		cout<<"A"<<endl;
 		for(j=LabelIndex-1;j>=0;j--)
 		{
 			if(current_instruction[j]!=' ' && doneFlag==0)
@@ -347,12 +352,14 @@ void MIPSSimulator::preprocess()
 				isLabel=1;
 				tempString=current_instruction[j]+tempString;
 			}
-			else if(current_instruction[j]!=' ' && doneFlag==1)
+			else if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==1)
 			{
+				cout<<"X: "<<j<<endl;
 				ReportError();
 			}
 			else if(isLabel==0)
 			{
+				cout<<"Y"<<endl;
 				ReportError();
 			}
 			else
@@ -360,6 +367,7 @@ void MIPSSimulator::preprocess()
 				doneFlag=1;
 			}
 		}//check if label has invalid characters to be done
+		//check if anything after label
 		if(tempString=="main")
 		{
 			foundMain=1;
@@ -394,7 +402,7 @@ void MIPSSimulator::preprocess()
 }
 void MIPSSimulator::ReportError()
 {
-	cout<<"Error found in instruction at address"<<(4*ProgramCounter)<<endl;
+	cout<<"Error found in instruction at address: "<<(4*ProgramCounter)<<": "<<InputProgram[ProgramCounter]<<endl;
 	displayState();
 	exit(1);
 }
@@ -443,6 +451,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	if(OperationID==-1)
 	{
+		cout<<"NF"<<endl;
 		ReportError();
 	}
 	if(OperationID<7)
@@ -465,6 +474,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	else if(OperationID<11)
 	{
+		cout<<"INIF"<<endl;
 		for(int count=0;count<2;count++)
 		{
 			RemoveSpaces(current_instruction);
@@ -473,7 +483,9 @@ int MIPSSimulator::ParseInstruction()
 			assertRemoveComma();
 		}
 		RemoveSpaces(current_instruction);
+		cout<<"BFL"<<endl;
 		string tempString=findLabel();
+		cout<<"FL"<<endl;
 		assertNumber(tempString);
 		r[2]=stoi(tempString);	
 	}
@@ -573,9 +585,11 @@ int MIPSSimulator::ParseInstruction()
 			RemoveSpaces(current_instruction);
 			assertRemoveComma();
 		}
+		cout<<"REG"<<endl;
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel();
 		int foundAddress=0;
+		cout<<"FOUNDL:"<<tempString<<"T"<<endl;
 		for(j=0;j<TableOfLabels.size();j++)
 		{
 			if(tempString==TableOfLabels[j].label)
@@ -688,6 +702,7 @@ void MIPSSimulator::RemoveSpaces(string &str)
 }
 void MIPSSimulator::add()
 {
+	cout<<"ADD"<<endl;
 	if(r[0]==29)
 	{
 		checkStackBounds(RegisterValues[r[1]]+RegisterValues[r[2]]);
@@ -700,9 +715,11 @@ void MIPSSimulator::add()
 	{
 		ReportError();
 	}
+	cout<<"LEA"<<endl;
 }
 void MIPSSimulator::addi()
 {
+	cout<<"ADDI"<<endl;
 	if(r[0]==29)
 	{
 		checkStackBounds(RegisterValues[r[1]]+r[2]);
@@ -713,8 +730,10 @@ void MIPSSimulator::addi()
 	}
 	else
 	{
+		cout<<"RE"<<endl;
 		ReportError();
 	}
+	cout<<"LEAI"<<endl;
 }
 void MIPSSimulator::sub()//Overflow check to be done?
 {
@@ -915,6 +934,7 @@ void MIPSSimulator::beq()
 }
 void MIPSSimulator::bne()
 {
+	cout<<"BNE"<<endl;
 	if(r[0]!=1 && r[1]!=1)
 	{
 		if(RegisterValues[r[0]]!=RegisterValues[r[1]])
@@ -957,12 +977,13 @@ void MIPSSimulator::displayState()
 	cout<<endl<<"Stack:"<<endl<<endl;
 	for(int i=0;i<100;i++)
 	{
-		cout<<(4*i)<<" "<<Stack[i]<<endl;
+		cout<<(4*i)<<" "<<Stack[i]<<"\t";
 	}
 	cout<<endl;
 }
 void MIPSSimulator::assertNumber(string str)
 {
+	cout<<"S: "<<str<<endl;
 	for(int j=0;j<str.size();j++)
 	{
 		if(str[j]<48 && str[j]>57)
@@ -1008,20 +1029,21 @@ string MIPSSimulator::findLabel()
 	int doneFinding=0;
 	for(int j=0;j<current_instruction.size();j++)
 	{
-		if(foundValue==1 && current_instruction[j]==' ' && doneFinding==0)
+		if(foundValue==1 && (current_instruction[j]==' ' || current_instruction[j]=='\t') && doneFinding==0)
 		{
 			doneFinding=1;
 		}
-		else if(foundValue==1 && current_instruction[j]!=' ' && doneFinding==1)
+		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFinding==1)
 		{
+			cout<<"INFL: "<<j<<" "<<current_instruction[j]<<"T"<<tempString<<endl;
 			ReportError();
 		}	
-		else if(foundValue==0 && current_instruction[j]!=' ')
+		else if(foundValue==0 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 		{
 			foundValue=1;
 			tempString=tempString+current_instruction[j];
 		}
-		else if(foundValue==1 && current_instruction[j]!=' ')
+		else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 		{
 			tempString=tempString+current_instruction[j];
 		}					
