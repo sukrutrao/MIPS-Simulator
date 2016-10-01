@@ -1,7 +1,7 @@
 //As of now no instructions can be there on lines containing labels
-//check all substrs
+//check all substrs - done
 //change maxxlength
-//\t apart from ' '
+//\t apart from ' ' - done
 //stoi out of range - done
 #include <iostream>
 #include <cmath>
@@ -444,7 +444,7 @@ int MIPSSimulator::ParseInstruction()
 		}
 	}
 	string operation=current_instruction.substr(0,j);
-	if(j<current_instruction.size()-1)
+	if(current_instruction.size()>0 && j<current_instruction.size()-1)
 	{
 		current_instruction=current_instruction.substr(j+1);
 	}
@@ -522,21 +522,21 @@ int MIPSSimulator::ParseInstruction()
 			offset=stoi(tempString);
 			current_instruction=current_instruction.substr(j);
 			RemoveSpaces(current_instruction);
-			if(current_instruction=="" || current_instruction[0]!='(')
+			if(current_instruction=="" || current_instruction[0]!='(' || current_instruction.size()<2)
 			{
 				cout<<"Error: '(' expected"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
 			RemoveSpaces(current_instruction);
-			if(current_instruction[0]!='$')
+			if(current_instruction[0]!='$' || current_instruction.size()<2)
 			{
 				cout<<"Error: Register expected"<<endl;
 				ReportError();
 			}
 			current_instruction=current_instruction.substr(1);
 			string confirmRegister=current_instruction.substr(0,2);
-			if(confirmRegister!=Registers[29])//only $sp supported for now
+			if(confirmRegister!=Registers[29] || current_instruction.size()<3)//only $sp supported for now
 			{
 				cout<<"Error: Can use offset only with stack pointer"<<endl;
 				ReportError();
@@ -1011,16 +1011,21 @@ void MIPSSimulator::assertNumber(string str)
 void MIPSSimulator::findRegister(int number)
 {
 	int foundRegister=0;
-	if(current_instruction[0]!='$')
+	if(current_instruction[0]!='$' || current_instruction.size()<2)
 	{
 		cout<<"Error: Register expected"<<endl;
 		ReportError();
 	}
 	current_instruction=current_instruction.substr(1);
 	string registerID=current_instruction.substr(0,2);
-	if(registerID=="ze")
+	if(registerID=="ze" && current_instruction.size()>=4)
 	{
 		registerID+=current_instruction.substr(2,2);
+	}
+	else if(registerID=="ze")
+	{
+		cout<<"Error: Register expected"<<endl;
+		ReportError();
 	}
 	for(int i=0;i<32;i++)
 	{
@@ -1070,7 +1075,7 @@ string MIPSSimulator::findLabel()
 }
 void MIPSSimulator::assertRemoveComma()
 {
-	if(current_instruction[0]!=',')
+	if(current_instruction.size()<2 current_instruction[0]!=',')
 	{
 		cout<<"Error: Comma expected"<<endl;
 		ReportError();
