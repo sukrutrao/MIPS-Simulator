@@ -36,7 +36,7 @@ addi $t0, $zero, 0 	#t0 is i, initialized to 0
 	  add $t2, $a0, $zero   #t2 contains modified a0, for now equals a0
 	  addi $v0, $zero, 0    #v0 is result, for now intiialized to 0
 Loop:
-andi $t1, $t2, 1073741824		#if bitwise and of t2 and 1 is 0
+andi $t1, $t2, 65535		#if bitwise and of t2 and 1 is 0
 	  beq $t1, $zero, Inc   #if true, go for increment
 	  addi $v0, $v0, 1		#if not, add to count of 1s
 Inc:
@@ -52,7 +52,7 @@ addi $t0, $zero, 0 	#t0 is i, initialized to 0
 	  add $t2, $a0, $zero   #t2 contains modified a0, for now equals a0
 	  addi $v0, $zero, 0    #v0 is result, for now intiialized to 0
 Loop2:
-andi $t1, $t2, 1073741824		#if bitwise and of t2 and 1 is 0
+andi $t1, $t2, 65535		#if bitwise and of t2 and 1 is 0
 	  beq $t1, $zero, Inc2   #if true, go for increment
 	  addi $v0, $v0, 1		#if not, add to count of 1s
 Inc2:

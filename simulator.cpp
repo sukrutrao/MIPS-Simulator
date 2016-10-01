@@ -96,7 +96,8 @@ void MIPSSimulator::Execute()
 		if(Mode==0)
 		{
 			displayState();
-			cin>>tempch;//see this later
+			tempch=getchar();
+		//	cin>>tempch;//see this later
 		}
 	}
 	displayState();
@@ -405,7 +406,7 @@ void MIPSSimulator::preprocess()
 	ProgramCounter=MainIndex;
 	cout<<"Initialized and ready to execute. Current state is as follows:"<<endl;
 	displayState();
-	cout<<"Starting execution"<<endl;
+	cout<<endl<<"Starting execution"<<endl<<endl;
 }
 void MIPSSimulator::ReportError()
 {
@@ -975,23 +976,19 @@ void MIPSSimulator::halt()
 }
 void MIPSSimulator::displayState()
 {
+	cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter]<<endl;
 	cout<<endl<<"Program Counter: "<<(4*ProgramCounter)<<endl<<endl;
 	cout<<"Registers:"<<endl<<endl;
 	printf("%11s%12s\t\t%10s%12s\n","Register","Value","Register","Value");
-	for(int i=0;i<32;i+=2)
+	for(int i=0;i<16;i++)
 	{
-		printf("%10d:%12d\t\t%10d%12d\n",i,RegisterValues[i],i+1,RegisterValues[i+1]);
+		printf("%6s(%2d):%12d\t\t%5s(%2d):%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
 	}
 	cout<<endl<<"Memory:"<<endl<<endl;
 	printf("%11s%8s\n","Label","Value");
 	for(int i=0;i<Memory.size();i++)
 	{
 		printf("%10s:%8d\n",Memory[i].label.c_str(),Memory[i].value);
-	}
-	cout<<endl<<"Stack:"<<endl<<endl;
-	for(int i=0;i<100;i++)
-	{
-		cout<<(4*i)<<" "<<Stack[i]<<"\t";
 	}
 	cout<<endl;
 }
