@@ -228,12 +228,12 @@ void MIPSSimulator::preprocess()
 			int doneFlag=0;
 			for(j=LabelIndex-1;j>=0;j--)
 			{
-				if(current_instruction[j]!=' ' && doneFlag==0)
+				if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0)
 				{
 					isLabel=1;
 					tempString=current_instruction[j]+tempString;
 				}
-				else if(current_instruction[j]!=' ' && doneFlag==1)
+				else if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==1)
 				{
 					cout<<"Error: Unexpected text before label name"<<endl;
 					ReportError();
@@ -263,21 +263,21 @@ void MIPSSimulator::preprocess()
 			tempString="";
 			for(j=wordIndex+5;j<current_instruction.size();j++)
 			{
-				if(foundValue==1 && current_instruction[j]==' ' && doneFinding==0)
+				if(foundValue==1 && (current_instruction[j]==' ' || current_instruction[j]=='\t') && doneFinding==0)
 				{
 					doneFinding=1;
 				}
-				else if(foundValue==1 && current_instruction[j]!=' ' && doneFinding==1)
+				else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFinding==1)
 				{
 					cout<<"Error: Unexpected text after value"<<endl;
 					ReportError();
 				}
-				else if(foundValue==0 && current_instruction[j]!=' ')
+				else if(foundValue==0 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 				{
 					foundValue=1;
 					tempString=tempString+current_instruction[j];
 				}
-				else if(foundValue==1 && current_instruction[j]!=' ')
+				else if(foundValue==1 && current_instruction[j]!=' ' && current_instruction[j]!='\t')
 				{
 					tempString=tempString+current_instruction[j];
 				}
@@ -354,7 +354,7 @@ void MIPSSimulator::preprocess()
 		doneFlag=0;
 		for(j=LabelIndex-1;j>=0;j--)
 		{
-			if(current_instruction[j]!=' ' && doneFlag==0)
+			if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0)
 			{
 				isLabel=1;
 				tempString=current_instruction[j]+tempString;
@@ -437,7 +437,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	for(j=0;j<4;j++)
 	{
-		if(current_instruction[j]==' ')
+		if(current_instruction[j]==' ' || current_instruction[j]=='\t')
 		{
 			break;
 		}
@@ -507,7 +507,7 @@ int MIPSSimulator::ParseInstruction()
 		if((current_instruction[0]>47 && current_instruction[0]<58) || current_instruction[0]=='-')
 		{
 			j=0;
-			while(j<current_instruction.size() && current_instruction[j]!=' ' && current_instruction[j]!='(')
+			while(j<current_instruction.size() && current_instruction[j]!=' ' && current_instruction[j]!='\t' && current_instruction[j]!='(')
 			{
 				tempString=tempString+current_instruction[j];
 				j++;
@@ -630,7 +630,7 @@ void MIPSSimulator::OnlySpaces(int lower, int upper, string str)
 {
 	for(int i=lower;i<upper;i++)
 	{
-		if(str[i]!=' ')
+		if(str[i]!=' ' && str[i]!='\t')
 		{
 			cout<<"Error: Unexpected character"<<endl;
 			ReportError();
