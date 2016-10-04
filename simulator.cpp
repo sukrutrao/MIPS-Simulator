@@ -1,8 +1,3 @@
-//As of now no instructions can be there on lines containing labels
-//check all substrs - done
-//change maxlength
-//\t apart from ' ' - done
-//stoi out of range - done
 #include <iostream>
 #include <cmath>
 #include <string>
