@@ -12,8 +12,8 @@ struct LabelTable
 };
 struct MemoryElement
 {
+	string label;
 	int value;
-  string label;
 };
 class MIPSSimulator
 {
@@ -71,7 +71,6 @@ int sorttable(LabelTable a, LabelTable b);
 int sortmemory(MemoryElement a, MemoryElement b);
 void MIPSSimulator::Execute()
 {
-	char tempch;
 	preprocess();
 	while(ProgramCounter<NumberOfInstructions && halt_value==0)
 	{
@@ -91,8 +90,7 @@ void MIPSSimulator::Execute()
 		if(Mode==0)
 		{
 			displayState();
-			tempch=getchar();
-		//	cin>>tempch;//see this later
+			getchar();
 		}
 	}
 	displayState();
@@ -143,7 +141,7 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 	while(getline(InputFile,tempString))
 	{
 		NumberOfInstructions++;
-		if(NumberOfInstructions<0)
+		if(NumberOfInstructions>MaxLength)
 		{
 			cout<<"Error: Number of instructions in input too large, maximum allowed is "<<MaxLength<<" instructions"<<endl;
 			exit(1);
