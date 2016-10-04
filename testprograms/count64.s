@@ -6,7 +6,7 @@ N1: .word 123			#two 32-bit integers, an array N for making it 64 bit
 N2: .word 100
 result: .word 0     #result for number of 1s
 
-.globl main
+
 
 #text section
 

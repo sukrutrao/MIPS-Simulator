@@ -209,7 +209,7 @@ void MIPSSimulator::preprocess()
 			LabelIndex=current_instruction.find(":");
 			if(LabelIndex==-1)
 			{
-				if(current_instruction.find(".globl main")==-1 && current_instruction.find(".text")==-1)
+				if(current_instruction.find(".text")==-1)
 				{
 					cout<<"Error: Unexpected symbol in data section"<<endl;
 					ReportError();
