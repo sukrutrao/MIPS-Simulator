@@ -524,19 +524,6 @@ int MIPSSimulator::ParseInstruction()
 			}
 			current_instruction=current_instruction.substr(1);
 			RemoveSpaces(current_instruction);
-		/*	if(current_instruction[0]!='$' || current_instruction.size()<2)
-			{
-				cout<<"Error: Register expected"<<endl;
-				ReportError();
-			}
-			current_instruction=current_instruction.substr(1);
-			string confirmRegister=current_instruction.substr(0,2);
-			if(confirmRegister!=Registers[29] || current_instruction.size()<3)//only $sp supported for now
-			{
-				cout<<"Error: Can use offset only with stack pointer"<<endl;
-				ReportError();
-			}
-			current_instruction=current_instruction.substr(2);*/
 			findRegister(1);
 			RemoveSpaces(current_instruction);
 			if(current_instruction=="" || current_instruction[0]!=')')
@@ -546,7 +533,6 @@ int MIPSSimulator::ParseInstruction()
 			}
 			current_instruction=current_instruction.substr(1);
 			OnlySpaces(0,current_instruction.size(),current_instruction);
-		//	r[1]=29;
 			r[2]=offset;
 		}
 		else
