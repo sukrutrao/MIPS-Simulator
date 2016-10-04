@@ -1,6 +1,6 @@
 //As of now no instructions can be there on lines containing labels
 //check all substrs - done
-//change maxxlength
+//change maxlength
 //\t apart from ' ' - done
 //stoi out of range - done
 #include <iostream>
@@ -982,7 +982,7 @@ void MIPSSimulator::displayState()
 	printf("%11s%12s\t\t%10s%12s\n","Register","Value","Register","Value");
 	for(int i=0;i<16;i++)
 	{
-		printf("%6s(%2d):%12d\t\t%5s(%2d):%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
+		printf("%6s[%2d]:%12d\t\t%5s[%2d]:%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
 	}
 	cout<<endl<<"Memory:"<<endl<<endl;
 	printf("%11s%8s\n","Label","Value");
@@ -1075,7 +1075,7 @@ string MIPSSimulator::findLabel()
 }
 void MIPSSimulator::assertRemoveComma()
 {
-	if(current_instruction.size()<2 current_instruction[0]!=',')
+	if(current_instruction.size()<2 || current_instruction[0]!=',')
 	{
 		cout<<"Error: Comma expected"<<endl;
 		ReportError();
