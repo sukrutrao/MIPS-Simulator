@@ -977,6 +977,7 @@ void MIPSSimulator::halt()
 }
 void MIPSSimulator::displayState()
 {
+	int current_address=40000;
 	if(ProgramCounter<NumberOfInstructions)
 	{
 		cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter]<<endl;
@@ -993,10 +994,15 @@ void MIPSSimulator::displayState()
 		printf("%6s[%2d]:%12d\t\t%5s[%2d]:%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
 	}
 	cout<<endl<<"Memory:"<<endl<<endl;
-	printf("%11s%8s\n","Label","Value");
+	printf("%11s%11s%8s\n","Address","Label","Value");
+	for(int i=0;i<100;i++)
+	{
+		printf("%11d%10s:%8d\n",current_address+4*i,"<Stack>",Stack[i]);
+	}
+	current_address+=400;
 	for(int i=0;i<Memory.size();i++)
 	{
-		printf("%10s:%8d\n",Memory[i].label.c_str(),Memory[i].value);
+		printf("%11d%10s:%8d\n",40400+4*i,Memory[i].label.c_str(),Memory[i].value);
 	}
 	cout<<endl;
 }
