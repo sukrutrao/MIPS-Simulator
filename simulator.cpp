@@ -1100,7 +1100,7 @@ void MIPSSimulator::checkStackBounds(int index)
 {
 	if(!(index<=40396 && index>=40000 && index%4==0))
 	{
-		cout<<"Error: Invalid address"<<endl;
+		cout<<"Error: Invalid address for stack pointer. To access data section, use labels instead of addresses"<<endl;
 		ReportError();
 	}
 }
