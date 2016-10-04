@@ -22,5 +22,10 @@ main:
 	slti $t4, $t0, 100
 	slti $t5, $t0, 4
 	sw $t4, o
-	lw $t6, o
+	addi $sp, $sp, -4
+	sw $t9, 0($sp)
+	add $t0, $sp, $zero
+	lw $t1, 0($t0)
+	sw $t6, 0($t0)
+	sw $t4, 0($sp)
 	halt

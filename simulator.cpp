@@ -109,7 +109,7 @@ void MIPSSimulator::Execute()
 }
 MIPSSimulator::MIPSSimulator(int mode, string fileName)
 {
-	MaxLength=2147483647;
+	MaxLength=10000;
 	NumberOfInstructions=0;
 	ProgramCounter=0;
 	halt_value=0;
@@ -135,7 +135,7 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 	{
 		Stack[i]=0;
 	}
-	RegisterValues[29]=396;
+	RegisterValues[29]=40396;
 	Mode=mode;
 	ifstream InputFile;
 	InputFile.open(fileName.c_str(),ios::in);
@@ -529,7 +529,7 @@ int MIPSSimulator::ParseInstruction()
 			}
 			current_instruction=current_instruction.substr(1);
 			RemoveSpaces(current_instruction);
-			if(current_instruction[0]!='$' || current_instruction.size()<2)
+		/*	if(current_instruction[0]!='$' || current_instruction.size()<2)
 			{
 				cout<<"Error: Register expected"<<endl;
 				ReportError();
@@ -541,7 +541,8 @@ int MIPSSimulator::ParseInstruction()
 				cout<<"Error: Can use offset only with stack pointer"<<endl;
 				ReportError();
 			}
-			current_instruction=current_instruction.substr(2);
+			current_instruction=current_instruction.substr(2);*/
+			findRegister(1);
 			RemoveSpaces(current_instruction);
 			if(current_instruction=="" || current_instruction[0]!=')')
 			{
@@ -550,7 +551,7 @@ int MIPSSimulator::ParseInstruction()
 			}
 			current_instruction=current_instruction.substr(1);
 			OnlySpaces(0,current_instruction.size(),current_instruction);
-			r[1]=29;
+		//	r[1]=29;
 			r[2]=offset;
 		}
 		else
@@ -903,7 +904,7 @@ void MIPSSimulator::lw()
 	else if(r[0]!=0 && r[0]!=1)
 	{
 		checkStackBounds(RegisterValues[r[1]]+r[2]);
-		RegisterValues[r[0]]=Stack[(RegisterValues[r[1]]+r[2])/4];
+		RegisterValues[r[0]]=Stack[(RegisterValues[r[1]]+r[2]-40000)/4];
 	}
 	else
 	{
@@ -920,7 +921,7 @@ void MIPSSimulator::sw()
 	else if(r[0]!=1)
 	{
 		checkStackBounds(RegisterValues[r[1]]+r[2]);
-		Stack[(RegisterValues[r[1]]+r[2])/4]=RegisterValues[r[0]];
+		Stack[(RegisterValues[r[1]]+r[2]-40000)/4]=RegisterValues[r[0]];
 	}
 	else
 	{
@@ -976,7 +977,14 @@ void MIPSSimulator::halt()
 }
 void MIPSSimulator::displayState()
 {
-	cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter]<<endl;
+	if(ProgramCounter<NumberOfInstructions)
+	{
+		cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter]<<endl;
+	}
+	else
+	{
+		cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter-1]<<endl;
+	}
 	cout<<endl<<"Program Counter: "<<(4*ProgramCounter)<<endl<<endl;
 	cout<<"Registers:"<<endl<<endl;
 	printf("%11s%12s\t\t%10s%12s\n","Register","Value","Register","Value");
@@ -1084,9 +1092,9 @@ void MIPSSimulator::assertRemoveComma()
 }
 void MIPSSimulator::checkStackBounds(int index)
 {
-	if(!(index<=396 && index>=0 && index%4==0))
+	if(!(index<=40396 && index>=40000 && index%4==0))
 	{
-		cout<<"Error: Stack pointer given invalid value"<<endl;
+		cout<<"Error: Invalid address"<<endl;
 		ReportError();
 	}
 }
