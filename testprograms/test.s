@@ -1,14 +1,16 @@
+ # sfsdg
 .data
-n: .word 5
+n: .word 10
 m: .word 6
 o: .word 7
 
 .text
 main:
-	lw $s0, n
+
+	lw $s0    , n
 	lw $t0, m
 	add $s1, $s0, $zero
-	addi $s2, $s0, 10
+	addi $s2, $s0, $zero
 	sub $s3, $s0, $zero
 	mul $s4, $s0, $t0
 	and $s5, $s4, $s3
@@ -28,4 +30,5 @@ main:
 	lw $t1, 0($t0)
 	sw $t6, 0($t0)
 	sw $t4, 0($sp)
-	halt
+	li $v0,  10
+	syscall

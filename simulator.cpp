@@ -1,3 +1,5 @@
+// space before colon
+// could not find text section - change message
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -242,7 +244,7 @@ void MIPSSimulator::preprocess()
 					doneFlag=1;
 				}
 
-			}//check if label has invalid characters to be done
+			}//TODO check if label has invalid characters
 			MemoryElement tempMemory;
 			tempMemory.label=tempString;
 			int wordIndex=current_instruction.find(".word"); //only .word supported as of now
@@ -989,13 +991,18 @@ void MIPSSimulator::assertNumber(string str)
 {
 	for(int j=0;j<str.size();j++)
 	{
-		if(str[j]<48 && str[j]>57)
+		if(str[j]<48 || str[j]>57)
 		{
 			cout<<"Error: Specified value is not a number"<<endl;
 			ReportError();
 		}
 	}
-	if(str.size()>10 || (str.size()==10 && str>"2147483647"))
+	if(str[0]!='-' && (str.size()>10 || (str.size()==10 && str>"2147483647")))
+	{
+		cout<<"Error: Number out of range"<<endl;
+		ReportError();
+	}
+	else if(str[0]=='-' && (str.size()>11 || (str.size()==11 && str>"-2147483648")))
 	{
 		cout<<"Error: Number out of range"<<endl;
 		ReportError();
@@ -1040,6 +1047,7 @@ void MIPSSimulator::findRegister(int number)
 }
 string MIPSSimulator::findLabel()
 {
+	RemoveSpaces(current_instruction);
 	string tempString="";
 	int foundValue=0;
 	int doneFinding=0;
