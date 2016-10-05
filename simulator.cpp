@@ -219,10 +219,15 @@ void MIPSSimulator::preprocess()
 				cout<<"Error: Label name expected"<<endl;
 				ReportError();
 			}
+			j=LabelIndex-1;
+			while(j>=0 && current_instruction[j]==' ' || current_instruction[j]=='\t')
+			{
+				j--;
+			}
 			tempString="";
 			int isLabel=0;
 			int doneFlag=0;
-			for(j=LabelIndex-1;j>=0;j--)
+			for(;j>=0;j--)
 			{
 				if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0)
 				{
@@ -243,7 +248,6 @@ void MIPSSimulator::preprocess()
 				{
 					doneFlag=1;
 				}
-
 			}//TODO check if label has invalid characters
 			MemoryElement tempMemory;
 			tempMemory.label=tempString;
@@ -345,10 +349,15 @@ void MIPSSimulator::preprocess()
 		{
 			continue;
 		}
+		j=LabelIndex-1;
+		while(j>=0 && current_instruction[j]==' ' || current_instruction[j]=='\t')
+		{
+			j--;
+		}
 		tempString="";
 		isLabel=0;
 		doneFlag=0;
-		for(j=LabelIndex-1;j>=0;j--)
+		for(;j>=0;j--)
 		{
 			if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0)
 			{
@@ -371,6 +380,7 @@ void MIPSSimulator::preprocess()
 			}
 		}//check if label has invalid characters to be done
 		//check if anything after label
+		OnlySpaces(LabelIndex+1,current_instruction.size(),current_instruction);
 		if(tempString=="main")
 		{
 			foundMain=1;

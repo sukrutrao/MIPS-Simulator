@@ -1,11 +1,11 @@
  # sfsdg
 .data
-n: .word 10
+n   : .word 10
 m: .word 6
 o: .word 7
 
 .text
-main:
+main   : 
 
 	lw $s0    , n
 	lw $t0, m
