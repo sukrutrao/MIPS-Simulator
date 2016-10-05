@@ -11,14 +11,14 @@ using namespace std;
 struct LabelTable
 {
 	string label;
-	int address;
+	int32_t address;
 };
 
 //structure for storing a memory element's label and value
 struct MemoryElement
 {
 	string label;
-	int value;
+	int32_t value;
 };
 
 //class for the MIPS Simulator
@@ -26,19 +26,19 @@ class MIPSSimulator
 {
 	private:
 		string Registers[32]; //array to store names of registers
-		int RegisterValues[32]; //array to store values of registers
+		int32_t RegisterValues[32]; //array to store values of registers
 		string InstructionSet[17]; //array to store names of instructions
-		int Mode; //to store the Mode of execution
+		int32_t Mode; //to store the Mode of execution
 		vector<string> InputProgram; //to store the input program
-		int NumberOfInstructions; //to store the number of lines in the program
+		int32_t NumberOfInstructions; //to store the number of lines in the program
 		string current_instruction; //to store the current instruction being worked with
-		int ProgramCounter; //to store the line number being worked with
-		int MaxLength; //to store the maximum length of the input program
-		int halt_value; //flag to check if program halted
-		int r[3]; //to store register names, values, etc. for the instruction
+		int32_t ProgramCounter; //to store the line number being worked with
+		int32_t MaxLength; //to store the maximum length of the input program
+		int32_t halt_value; //flag to check if program halted
+		int32_t r[3]; //to store register names, values, etc. for the instruction
 		vector<struct LabelTable> TableOfLabels; //to store all the labels and addresses
 		vector<struct MemoryElement> Memory; //to store all the memory elements
-		int Stack[100]; //stack array
+		int32_t Stack[100]; //stack array
 		void add();
 		void addi();
 		void sub();
@@ -57,26 +57,26 @@ class MIPSSimulator
 		void j();
 		void halt();
 		void preprocess();
-		void ReadInstruction(int line);
-		int ParseInstruction();
+		void ReadInstruction(int32_t line);
+		int32_t ParseInstruction();
 		void ReportError();
-		void ExecuteInstruction(int instruction);
-		void OnlySpaces(int lower, int upper, string str);
+		void ExecuteInstruction(int32_t instruction);
+		void OnlySpaces(int32_t lower, int32_t upper, string str);
 		void RemoveSpaces(string &str);
 		void assertNumber(string str);
-		void findRegister(int number);
+		void findRegister(int32_t number);
 		string findLabel();
 		void assertRemoveComma();
-		void checkStackBounds(int index);
+		void checkStackBounds(int32_t index);
 		void assertLabelAllowed(string str);
 
 	public:
-		MIPSSimulator(int mode, string fileName);
+		MIPSSimulator(int32_t mode, string fileName);
 		void Execute();
 		void displayState();
 };
-int sorttable(LabelTable a, LabelTable b);
-int sortmemory(MemoryElement a, MemoryElement b);
+int32_t sorttable(LabelTable a, LabelTable b);
+int32_t sortmemory(MemoryElement a, MemoryElement b);
 
 //function to run the simulator
 void MIPSSimulator::Execute()
@@ -91,7 +91,7 @@ void MIPSSimulator::Execute()
 			ProgramCounter++;
 			continue;
 		}
-		int instruction=ParseInstruction(); //get operationID
+		int32_t instruction=ParseInstruction(); //get operationID
 		ExecuteInstruction(instruction);
 		if(instruction<13 || instruction>15) //if not jump, update ProgramCounter here
 		{
@@ -112,7 +112,7 @@ void MIPSSimulator::Execute()
 }
 
 //constructor to initialize values for the simulator and pass the mode and the input file path
-MIPSSimulator::MIPSSimulator(int mode, string fileName)
+MIPSSimulator::MIPSSimulator(int32_t mode, string fileName)
 {
 	MaxLength=10000; //maximum allowed length of input file
 	NumberOfInstructions=0;
@@ -122,21 +122,21 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 	TableOfLabels.clear();
 	string tempRegisters[]={"zero","at","v0","v1","a0","a1","a2","a3","t0","t1","t2","t3","t4","t5","t6",
 	"t7","s0","s1","s2","s3","s4","s5","s6","s7","t8","t9","k0","k1","gp","sp","s8","ra"}; //names of registers
-	for(int i=0;i<32;i++)
+	for(int32_t i=0;i<32;i++)
 	{
 		Registers[i]=tempRegisters[i];
 	}
-	for(int i=0;i<32;i++)
+	for(int32_t i=0;i<32;i++)
 	{
 		RegisterValues[i]=0; //initialize registers to 0
 	}
 	string tempInstructionSet[]={"add","sub","mul","and","or","nor","slt","addi","andi","ori","slti","lw",
 	"sw","beq","bne","j","halt"}; //names of instructions allowed
-	for(int i=0;i<17;i++)
+	for(int32_t i=0;i<17;i++)
 	{
 		InstructionSet[i]=tempInstructionSet[i];
 	}
-	for(int i=0;i<100;i++)
+	for(int32_t i=0;i<100;i++)
 	{
 		Stack[i]=0; //initialize stack elements to 0
 	}
@@ -166,16 +166,16 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 //function to store label names and addresses and memory names and values from the whole program
 void MIPSSimulator::preprocess()
 {
-	int i=0,j=0;
-	int current_section=-1; //current_section=0 - data section, current_section=1 - text section
-	int index; //to hold index of ".data"
-	int commentindex;
-	int flag=0; //whether "..data" found
+	int32_t i=0,j=0;
+	int32_t current_section=-1; //current_section=0 - data section, current_section=1 - text section
+	int32_t index; //to hold index of ".data"
+	int32_t commentindex;
+	int32_t flag=0; //whether "..data" found
 	string tempString="";
 	int	isLabel=0;
 	int	doneFlag=0;
-	int dataStart=0; //line number for start of data section
-	int textStart=0;
+	int32_t dataStart=0; //line number for start of data section
+	int32_t textStart=0;
 	for(i=0;i<NumberOfInstructions;i++)
 	{
 		ReadInstruction(i);
@@ -202,7 +202,7 @@ void MIPSSimulator::preprocess()
 			ReportError();
 		}
 	}
-	int LabelIndex; //to store index of ":"
+	int32_t LabelIndex; //to store index of ":"
 	if(current_section==0) //in data section
 	{
 		for(i=dataStart+1;i<NumberOfInstructions;i++)
@@ -237,8 +237,8 @@ void MIPSSimulator::preprocess()
 				j--;
 			}
 			tempString=""; //to store label name
-	//		int isLabel=0; //label found
-			int doneFlag=0; //label name complete
+	//		int32_t isLabel=0; //label found
+			int32_t doneFlag=0; //label name complete
 			for(;j>=0;j--)
 			{
 				if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0) //till label name characters are being found
@@ -264,15 +264,15 @@ void MIPSSimulator::preprocess()
 			assertLabelAllowed(tempString); //check validity of name
 			MemoryElement tempMemory;
 			tempMemory.label=tempString; //create memory and store memory element
-			int wordIndex=current_instruction.find(".word"); //search for ".word" in the same way
+			int32_t wordIndex=current_instruction.find(".word"); //search for ".word" in the same way
 			if(wordIndex==-1)
 			{
 				cout<<"Error: .word not found"<<endl;
 				ReportError();
 			}
 			OnlySpaces(LabelIndex+1,wordIndex,current_instruction);
-			int foundValue=0;
-			int doneFinding=0;
+			int32_t foundValue=0;
+			int32_t doneFinding=0;
 			tempString="";
 			for(j=wordIndex+5;j<current_instruction.size();j++)
 			{
@@ -309,8 +309,8 @@ void MIPSSimulator::preprocess()
 			exit(1);
 		}
 	}
-	int textFlag=0;
-	int textIndex=0;
+	int32_t textFlag=0;
+	int32_t textIndex=0;
 	for(i=ProgramCounter;i<NumberOfInstructions;i++)
 	{
 		ReadInstruction(i);
@@ -342,8 +342,8 @@ void MIPSSimulator::preprocess()
 		cout<<"Error: Text section does not exist or found unknown string"<<endl;
 		exit(1);
 	}
-	int MainIndex=0; //location of main label
-	int foundMain=0; //whether main label found
+	int32_t MainIndex=0; //location of main label
+	int32_t foundMain=0; //whether main label found
 	LabelIndex=0;
 	for(i=textStart+1;i<NumberOfInstructions;i++)
 	{
@@ -436,7 +436,7 @@ void MIPSSimulator::ReportError()
 }
 
 //function to read an instruction, crop out comments and set the ProgramCounter value
-void MIPSSimulator::ReadInstruction(int line)
+void MIPSSimulator::ReadInstruction(int32_t line)
 {
 	current_instruction=InputProgram[line]; //set current_instruction
 	if(current_instruction.find("#")!=-1) //remove comments
@@ -447,9 +447,9 @@ void MIPSSimulator::ReadInstruction(int line)
 }
 
 //function to find out which instruction is to be executed and and populate values in r[]
-int MIPSSimulator::ParseInstruction()
+int32_t MIPSSimulator::ParseInstruction()
 {
-	int i=0,j=0;
+	int32_t i=0,j=0;
 	RemoveSpaces(current_instruction); //remove spaces
 	if(current_instruction.find(":")!=-1) //if label encountered
 	{
@@ -472,8 +472,8 @@ int MIPSSimulator::ParseInstruction()
 	{
 		current_instruction=current_instruction.substr(j+1);
 	}
-	int foundOp=0; //whether valid operation or not
-	int OperationID=-1; //set operation index from array
+	int32_t foundOp=0; //whether valid operation or not
+	int32_t OperationID=-1; //set operation index from array
 	for(i=0;i<17;i++) //check operation with allowed operations
 	{
 		if(operation==InstructionSet[i])
@@ -489,7 +489,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	if(OperationID<7) //for R-format instructions
 	{
-		for(int count=0;count<3;count++) //find three registers separated by commas and put them in r[]
+		for(int32_t count=0;count<3;count++) //find three registers separated by commas and put them in r[]
 		{
 			RemoveSpaces(current_instruction);
 			findRegister(count);
@@ -508,7 +508,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	else if(OperationID<11) //for I-format instructions
 	{
-		for(int count=0;count<2;count++) //find two registers separated by commas
+		for(int32_t count=0;count<2;count++) //find two registers separated by commas
 		{
 			RemoveSpaces(current_instruction);
 			findRegister(count);
@@ -523,7 +523,7 @@ int MIPSSimulator::ParseInstruction()
 	else if(OperationID<13) //for lw, sw
 	{
 		string tempString="";
-		int offset;
+		int32_t offset;
 		RemoveSpaces(current_instruction);
 		findRegister(0); //find source/destination register
 		RemoveSpaces(current_instruction);
@@ -572,7 +572,7 @@ int MIPSSimulator::ParseInstruction()
 		else //if label type
 		{
 			tempString=findLabel(); //find label
-			int foundLocation=0;
+			int32_t foundLocation=0;
 			for(j=0;j<Memory.size();j++)
 			{
 				if(tempString==Memory[j].label) //check for label from memory
@@ -599,7 +599,7 @@ int MIPSSimulator::ParseInstruction()
 	}
 	else if(OperationID<15) //for beq, bne
 	{
-		for(int count=0;count<2;count++) //find two registers separated by commas
+		for(int32_t count=0;count<2;count++) //find two registers separated by commas
 		{
 			RemoveSpaces(current_instruction);
 			findRegister(count);
@@ -608,7 +608,7 @@ int MIPSSimulator::ParseInstruction()
 		}
 		RemoveSpaces(current_instruction);
 		string tempString=findLabel(); //find label
-		int foundAddress=0;
+		int32_t foundAddress=0;
 		for(j=0;j<TableOfLabels.size();j++) //search for label
 		{
 			if(tempString==TableOfLabels[j].label)
@@ -627,7 +627,7 @@ int MIPSSimulator::ParseInstruction()
 	else if(OperationID==15) //for j
 	{
 		RemoveSpaces(current_instruction);
-		int foundAddress=0;
+		int32_t foundAddress=0;
 		string tempString=findLabel(); //find jump label
 		for(j=0;j<TableOfLabels.size();j++) //search for label
 		{
@@ -651,9 +651,9 @@ int MIPSSimulator::ParseInstruction()
 }
 
 //function to check that between lower and upper-1 indices, str has only spaces, else report an error
-void MIPSSimulator::OnlySpaces(int lower, int upper, string str)
+void MIPSSimulator::OnlySpaces(int32_t lower, int32_t upper, string str)
 {
-	for(int i=lower;i<upper;i++)
+	for(int32_t i=lower;i<upper;i++)
 	{
 		if(str[i]!=' ' && str[i]!='\t') //check that only ' ' and '\t' characters exist
 		{
@@ -664,7 +664,7 @@ void MIPSSimulator::OnlySpaces(int lower, int upper, string str)
 }
 
 //function to call the appropriate operation function based on the operation to execute
-void MIPSSimulator::ExecuteInstruction(int instruction)
+void MIPSSimulator::ExecuteInstruction(int32_t instruction)
 {
 	switch(instruction) //call appropriate function based on the value of instruction
 	{
@@ -730,7 +730,7 @@ void MIPSSimulator::ExecuteInstruction(int instruction)
 //function to remove spaces starting from first elements till they exist continuously in str
 void MIPSSimulator::RemoveSpaces(string &str)
 {
-	int j=0;
+	int32_t j=0;
 	while(j<str.size() && (str[j]==' ' || str[j]=='\t')) //till only ' ' or '\t' found
 	{
 		j++;
@@ -1027,7 +1027,7 @@ void MIPSSimulator::halt()
 //function to display the state of the registers and memory
 void MIPSSimulator::displayState()
 {
-	int current_address=40000; //starting address of memory
+	int32_t current_address=40000; //starting address of memory
 	if(ProgramCounter<NumberOfInstructions) //display current instruction
 	{
 		cout<<endl<<"Executing instruction: "<<InputProgram[ProgramCounter]<<endl;
@@ -1039,18 +1039,18 @@ void MIPSSimulator::displayState()
 	cout<<endl<<"Program Counter: "<<(4*ProgramCounter)<<endl<<endl; //display ProgramCounter
 	cout<<"Registers:"<<endl<<endl;
 	printf("%11s%12s\t\t%10s%12s\n","Register","Value","Register","Value");
-	for(int i=0;i<16;i++) //display registers
+	for(int32_t i=0;i<16;i++) //display registers
 	{
 		printf("%6s[%2d]:%12d\t\t%5s[%2d]:%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
 	}
 	cout<<endl<<"Memory:"<<endl<<endl; //display memory
 	printf("%11s%11s%8s\n","Address","Label","Value");
-	for(int i=0;i<100;i++) //stack
+	for(int32_t i=0;i<100;i++) //stack
 	{
 		printf("%11d%10s:%8d\n",current_address+4*i,"<Stack>",Stack[i]);
 	}
 	current_address+=400;
-	for(int i=0;i<Memory.size();i++) //labels
+	for(int32_t i=0;i<Memory.size();i++) //labels
 	{
 		printf("%11d%10s:%8d\n",40400+4*i,Memory[i].label.c_str(),Memory[i].value);
 	}
@@ -1060,7 +1060,7 @@ void MIPSSimulator::displayState()
 //function to check that an stoi() on str would be valid, i.e., that str can be converted to an integer
 void MIPSSimulator::assertNumber(string str)
 {
-	for(int j=0;j<str.size();j++) //check that each character is a digit
+	for(int32_t j=0;j<str.size();j++) //check that each character is a digit
 	{
 		if(j==0 && str[j]=='-') //ignore minus sign
 		{
@@ -1085,9 +1085,9 @@ void MIPSSimulator::assertNumber(string str)
 }
 
 //function to find which register has been specified and the populate the value in r[number]
-void MIPSSimulator::findRegister(int number)
+void MIPSSimulator::findRegister(int32_t number)
 {
-	int foundRegister=0;
+	int32_t foundRegister=0;
 	if(current_instruction[0]!='$' || current_instruction.size()<2) //find '$' sign
 	{
 		cout<<"Error: Register expected"<<endl;
@@ -1104,7 +1104,7 @@ void MIPSSimulator::findRegister(int number)
 		cout<<"Error: Register expected"<<endl;
 		ReportError();
 	}
-	for(int i=0;i<32;i++)
+	for(int32_t i=0;i<32;i++)
 	{
 		if(registerID==Registers[i]) //find register from list
 		{
@@ -1128,9 +1128,9 @@ string MIPSSimulator::findLabel()
 {
 	RemoveSpaces(current_instruction); //remove spaces
 	string tempString=""; //to store label
-	int foundValue=0; //found
-	int doneFinding=0; //completed finding
-	for(int j=0;j<current_instruction.size();j++)
+	int32_t foundValue=0; //found
+	int32_t doneFinding=0; //completed finding
+	for(int32_t j=0;j<current_instruction.size();j++)
 	{
 		if(foundValue==1 && (current_instruction[j]==' ' || current_instruction[j]=='\t') && doneFinding==0)
 		{
@@ -1166,7 +1166,7 @@ void MIPSSimulator::assertRemoveComma()
 }
 
 //function to check that the offset for stack is valid and within bounds
-void MIPSSimulator::checkStackBounds(int index)
+void MIPSSimulator::checkStackBounds(int32_t index)
 {
 	if(!(index<=40396 && index>=40000 && index%4==0)) //check that address is within stack bounds and a multiple of 4
 	{
@@ -1183,7 +1183,7 @@ void MIPSSimulator::assertLabelAllowed(string str)
 		cout<<"Error: Invalid label"<<endl;
 		ReportError();
 	}
-	for(int i=0;i<str.size();i++)
+	for(int32_t i=0;i<str.size();i++)
 	{
 		if(!((str[i]>47 && str[i]<58) || (str[i]>=65 && str[i]<=90) || (str[i]>=97 && str[i]<=122))) //check that only numbers and letters are used
 		{
@@ -1194,13 +1194,13 @@ void MIPSSimulator::assertLabelAllowed(string str)
 }
 
 //function to get ordering for memory elements for sorting
-int sortmemory(MemoryElement a, MemoryElement b)
+int32_t sortmemory(MemoryElement a, MemoryElement b)
 {
 	return a.label<b.label; //sort by label
 }
 
 //function to get ordering of labels for sorting
-int sorttable(LabelTable a, LabelTable b)
+int32_t sorttable(LabelTable a, LabelTable b)
 {
 	return a.label<b.label; //sort by label
 }
@@ -1208,7 +1208,7 @@ int sorttable(LabelTable a, LabelTable b)
 int main()
 {
 	string path;
-	int mode;
+	int32_t mode;
 	cout<<"Program to simulate execution in MIPS Assembly language. Two modes are available:"<<endl<<"1. Step by Step Mode"<<endl<<"2. Execution Mode"<<endl<<endl;
 	cout<<"Enter the relative path of the input file and the mode:"<<endl;
 	cin>>path>>mode;
