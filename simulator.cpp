@@ -63,6 +63,7 @@ class MIPSSimulator
 		string findLabel();
 		void assertRemoveComma();
 		void checkStackBounds(int index);
+		void assertLabelAllowed(string str);
 
 	public:
 		MIPSSimulator(int mode, string fileName);
@@ -145,7 +146,7 @@ MIPSSimulator::MIPSSimulator(int mode, string fileName)
 		NumberOfInstructions++;
 		if(NumberOfInstructions>MaxLength)
 		{
-			cout<<"Error: Number of instructions in input too large, maximum allowed is "<<MaxLength<<" instructions"<<endl;
+			cout<<"Error: Number of lines in input too large, maximum allowed is "<<MaxLength<<" line"<<endl;
 			exit(1);
 		}
 		InputProgram.push_back(tempString);
@@ -248,7 +249,9 @@ void MIPSSimulator::preprocess()
 				{
 					doneFlag=1;
 				}
-			}//TODO check if label has invalid characters
+			}
+			assertLabelAllowed(tempString);
+			//TODO check if label has invalid characters
 			MemoryElement tempMemory;
 			tempMemory.label=tempString;
 			int wordIndex=current_instruction.find(".word"); //only .word supported as of now
@@ -326,7 +329,7 @@ void MIPSSimulator::preprocess()
 	}
 	if(current_section!=1)
 	{
-		cout<<"Error: Could not find text section"<<endl;
+		cout<<"Error: Text section does not exist or found unknown string"<<endl;
 		exit(1);
 	}
 	int MainIndex=0;
@@ -380,6 +383,7 @@ void MIPSSimulator::preprocess()
 			}
 		}//check if label has invalid characters to be done
 		//check if anything after label
+		assertLabelAllowed(tempString);
 		OnlySpaces(LabelIndex+1,current_instruction.size(),current_instruction);
 		if(tempString=="main")
 		{
@@ -1001,6 +1005,10 @@ void MIPSSimulator::assertNumber(string str)
 {
 	for(int j=0;j<str.size();j++)
 	{
+		if(j==0 && str[j]=='-')
+		{
+			continue;
+		}
 		if(str[j]<48 || str[j]>57)
 		{
 			cout<<"Error: Specified value is not a number"<<endl;
@@ -1099,6 +1107,22 @@ void MIPSSimulator::checkStackBounds(int index)
 	{
 		cout<<"Error: Invalid address for stack pointer. To access data section, use labels instead of addresses"<<endl;
 		ReportError();
+	}
+}
+void MIPSSimulator::assertLabelAllowed(string str)
+{
+	if(str.size()==0 || (str[0]>47 && str[0]<58))
+	{
+		cout<<"Error: Invalid label"<<endl;
+		ReportError();
+	}
+	for(int i=0;i<str.size();i++)
+	{
+		if(!((str[i]>47 && str[i]<58) || (str[i]>=65 && str[i]<=90) || (str[i]>=97 && str[i]<=122)))
+		{
+			cout<<"Error: Invalid label"<<endl;
+			ReportError();
+		}
 	}
 }
 int sortmemory(MemoryElement a, MemoryElement b)
