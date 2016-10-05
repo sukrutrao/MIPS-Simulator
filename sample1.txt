@@ -1,0 +1,131 @@
+
+MIPS Simulator
+
+Program to simulate execution in MIPS Assembly language. Two modes are available:
+
+1. Step by Step Mode - View state after each instruction
+2. Execution Mode - View state after end of execution
+
+Enter the relative path of the input file and the mode number:
+samples/sample1.s
+2
+Initialized and ready to execute. Current state is as follows:
+
+Executing instruction:   lw $s0, A # $s0 contains A
+
+Program Counter: 52
+
+Registers:
+
+   Register       Value		  Register       Value
+  zero[ 0]:           0		   s0[16]:           0
+    at[ 1]:           0		   s1[17]:           0
+    v0[ 2]:           0		   s2[18]:           0
+    v1[ 3]:           0		   s3[19]:           0
+    a0[ 4]:           0		   s4[20]:           0
+    a1[ 5]:           0		   s5[21]:           0
+    a2[ 6]:           0		   s6[22]:           0
+    a3[ 7]:           0		   s7[23]:           0
+    t0[ 8]:           0		   t8[24]:           0
+    t1[ 9]:           0		   t9[25]:           0
+    t2[10]:           0		   k0[26]:           0
+    t3[11]:           0		   k1[27]:           0
+    t4[12]:           0		   gp[28]:   100000000
+    t5[13]:           0		   sp[29]:       40396
+    t6[14]:           0		   s8[30]:           0
+    t7[15]:           0		   ra[31]:           0
+
+Memory:
+
+Address    Label   Value      Address    Label   Value    Address    Label   Value     Address    Label   Value     Address    Label   Value
+   9c40 <Stack>:       0	 9c90 <Stack>:       0	     9ce0 <Stack>:       0	  9d30 <Stack>:       0	       9d80 <Stack>:       0
+   9c44 <Stack>:       0	 9c94 <Stack>:       0	     9ce4 <Stack>:       0	  9d34 <Stack>:       0	       9d84 <Stack>:       0
+   9c48 <Stack>:       0	 9c98 <Stack>:       0	     9ce8 <Stack>:       0	  9d38 <Stack>:       0	       9d88 <Stack>:       0
+   9c4c <Stack>:       0	 9c9c <Stack>:       0	     9cec <Stack>:       0	  9d3c <Stack>:       0	       9d8c <Stack>:       0
+   9c50 <Stack>:       0	 9ca0 <Stack>:       0	     9cf0 <Stack>:       0	  9d40 <Stack>:       0	       9d90 <Stack>:       0
+   9c54 <Stack>:       0	 9ca4 <Stack>:       0	     9cf4 <Stack>:       0	  9d44 <Stack>:       0	       9d94 <Stack>:       0
+   9c58 <Stack>:       0	 9ca8 <Stack>:       0	     9cf8 <Stack>:       0	  9d48 <Stack>:       0	       9d98 <Stack>:       0
+   9c5c <Stack>:       0	 9cac <Stack>:       0	     9cfc <Stack>:       0	  9d4c <Stack>:       0	       9d9c <Stack>:       0
+   9c60 <Stack>:       0	 9cb0 <Stack>:       0	     9d00 <Stack>:       0	  9d50 <Stack>:       0	       9da0 <Stack>:       0
+   9c64 <Stack>:       0	 9cb4 <Stack>:       0	     9d04 <Stack>:       0	  9d54 <Stack>:       0	       9da4 <Stack>:       0
+   9c68 <Stack>:       0	 9cb8 <Stack>:       0	     9d08 <Stack>:       0	  9d58 <Stack>:       0	       9da8 <Stack>:       0
+   9c6c <Stack>:       0	 9cbc <Stack>:       0	     9d0c <Stack>:       0	  9d5c <Stack>:       0	       9dac <Stack>:       0
+   9c70 <Stack>:       0	 9cc0 <Stack>:       0	     9d10 <Stack>:       0	  9d60 <Stack>:       0	       9db0 <Stack>:       0
+   9c74 <Stack>:       0	 9cc4 <Stack>:       0	     9d14 <Stack>:       0	  9d64 <Stack>:       0	       9db4 <Stack>:       0
+   9c78 <Stack>:       0	 9cc8 <Stack>:       0	     9d18 <Stack>:       0	  9d68 <Stack>:       0	       9db8 <Stack>:       0
+   9c7c <Stack>:       0	 9ccc <Stack>:       0	     9d1c <Stack>:       0	  9d6c <Stack>:       0	       9dbc <Stack>:       0
+   9c80 <Stack>:       0	 9cd0 <Stack>:       0	     9d20 <Stack>:       0	  9d70 <Stack>:       0	       9dc0 <Stack>:       0
+   9c84 <Stack>:       0	 9cd4 <Stack>:       0	     9d24 <Stack>:       0	  9d74 <Stack>:       0	       9dc4 <Stack>:       0
+   9c88 <Stack>:       0	 9cd8 <Stack>:       0	     9d28 <Stack>:       0	  9d78 <Stack>:       0	       9dc8 <Stack>:       0
+   9c8c <Stack>:       0	 9cdc <Stack>:       0	     9d2c <Stack>:       0	  9d7c <Stack>:       0	       9dcc <Stack>:       0
+   9dd0       A:       1
+   9dd4       B:       2
+   9dd8    band:       0
+   9ddc    bnor:       0
+   9de0     bor:       0
+   9de4  differ:       0
+   9de8 product:       0
+   9dec     sum:       0
+
+
+Starting execution
+
+
+Executing instruction:   halt
+
+Program Counter: 112
+
+Registers:
+
+   Register       Value		  Register       Value
+  zero[ 0]:           0		   s0[16]:           1
+    at[ 1]:           0		   s1[17]:           2
+    v0[ 2]:           0		   s2[18]:           0
+    v1[ 3]:           0		   s3[19]:           0
+    a0[ 4]:           0		   s4[20]:           0
+    a1[ 5]:           0		   s5[21]:           0
+    a2[ 6]:           0		   s6[22]:           0
+    a3[ 7]:           0		   s7[23]:           0
+    t0[ 8]:          -4		   t8[24]:           0
+    t1[ 9]:           0		   t9[25]:           0
+    t2[10]:           0		   k0[26]:           0
+    t3[11]:           0		   k1[27]:           0
+    t4[12]:           0		   gp[28]:   100000000
+    t5[13]:           0		   sp[29]:       40396
+    t6[14]:           0		   s8[30]:           0
+    t7[15]:           0		   ra[31]:           0
+
+Memory:
+
+Address    Label   Value      Address    Label   Value    Address    Label   Value     Address    Label   Value     Address    Label   Value
+   9c40 <Stack>:       0	 9c90 <Stack>:       0	     9ce0 <Stack>:       0	  9d30 <Stack>:       0	       9d80 <Stack>:       0
+   9c44 <Stack>:       0	 9c94 <Stack>:       0	     9ce4 <Stack>:       0	  9d34 <Stack>:       0	       9d84 <Stack>:       0
+   9c48 <Stack>:       0	 9c98 <Stack>:       0	     9ce8 <Stack>:       0	  9d38 <Stack>:       0	       9d88 <Stack>:       0
+   9c4c <Stack>:       0	 9c9c <Stack>:       0	     9cec <Stack>:       0	  9d3c <Stack>:       0	       9d8c <Stack>:       0
+   9c50 <Stack>:       0	 9ca0 <Stack>:       0	     9cf0 <Stack>:       0	  9d40 <Stack>:       0	       9d90 <Stack>:       0
+   9c54 <Stack>:       0	 9ca4 <Stack>:       0	     9cf4 <Stack>:       0	  9d44 <Stack>:       0	       9d94 <Stack>:       0
+   9c58 <Stack>:       0	 9ca8 <Stack>:       0	     9cf8 <Stack>:       0	  9d48 <Stack>:       0	       9d98 <Stack>:       0
+   9c5c <Stack>:       0	 9cac <Stack>:       0	     9cfc <Stack>:       0	  9d4c <Stack>:       0	       9d9c <Stack>:       0
+   9c60 <Stack>:       0	 9cb0 <Stack>:       0	     9d00 <Stack>:       0	  9d50 <Stack>:       0	       9da0 <Stack>:       0
+   9c64 <Stack>:       0	 9cb4 <Stack>:       0	     9d04 <Stack>:       0	  9d54 <Stack>:       0	       9da4 <Stack>:       0
+   9c68 <Stack>:       0	 9cb8 <Stack>:       0	     9d08 <Stack>:       0	  9d58 <Stack>:       0	       9da8 <Stack>:       0
+   9c6c <Stack>:       0	 9cbc <Stack>:       0	     9d0c <Stack>:       0	  9d5c <Stack>:       0	       9dac <Stack>:       0
+   9c70 <Stack>:       0	 9cc0 <Stack>:       0	     9d10 <Stack>:       0	  9d60 <Stack>:       0	       9db0 <Stack>:       0
+   9c74 <Stack>:       0	 9cc4 <Stack>:       0	     9d14 <Stack>:       0	  9d64 <Stack>:       0	       9db4 <Stack>:       0
+   9c78 <Stack>:       0	 9cc8 <Stack>:       0	     9d18 <Stack>:       0	  9d68 <Stack>:       0	       9db8 <Stack>:       0
+   9c7c <Stack>:       0	 9ccc <Stack>:       0	     9d1c <Stack>:       0	  9d6c <Stack>:       0	       9dbc <Stack>:       0
+   9c80 <Stack>:       0	 9cd0 <Stack>:       0	     9d20 <Stack>:       0	  9d70 <Stack>:       0	       9dc0 <Stack>:       0
+   9c84 <Stack>:       0	 9cd4 <Stack>:       0	     9d24 <Stack>:       0	  9d74 <Stack>:       0	       9dc4 <Stack>:       0
+   9c88 <Stack>:       0	 9cd8 <Stack>:       0	     9d28 <Stack>:       0	  9d78 <Stack>:       0	       9dc8 <Stack>:       0
+   9c8c <Stack>:       0	 9cdc <Stack>:       0	     9d2c <Stack>:       0	  9d7c <Stack>:       0	       9dcc <Stack>:       0
+   9dd0       A:       1
+   9dd4       B:       2
+   9dd8    band:       0
+   9ddc    bnor:      -4
+   9de0     bor:       3
+   9de4  differ:      -1
+   9de8 product:       2
+   9dec     sum:       3
+
+
+Execution completed successfully
