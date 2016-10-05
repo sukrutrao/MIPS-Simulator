@@ -81,6 +81,7 @@ int32_t sortmemory(MemoryElement a, MemoryElement b);
 //function to run the simulator
 void MIPSSimulator::Execute()
 {
+	getchar(); //to remove effect of pressing enter key while starting
 	preprocess(); //populate list of memory elements and labels
 	while(ProgramCounter<NumberOfInstructions && halt_value==0) //traverse instructions till end or till halt
 	{
@@ -97,7 +98,7 @@ void MIPSSimulator::Execute()
 		{
 			ProgramCounter++;
 		}
-		if(Mode==0) //if step by step mode, display state and wait
+		if(Mode==0 && halt_value==0) //if step by step mode, display state and wait
 		{
 			displayState();
 			getchar();
@@ -769,7 +770,7 @@ void MIPSSimulator::addi()
 }
 
 //function to execute sub
-void MIPSSimulator::sub()//Overflow check to be done?
+void MIPSSimulator::sub()
 {
 	if(r[0]==29)
 	{

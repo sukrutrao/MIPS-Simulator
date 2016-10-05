@@ -12,7 +12,7 @@ bnor: .word 0
 .text
 main:
   lw $s0, A # $s0 contains A
-  lw $s1, B # $s1 contains B
+  lw $s1, B # s1 contains B
   add $t0, $s0, $s1 # $t0 contains each result
   sw $t0, sum # store each result
   sub $t0, $s0, $s1
