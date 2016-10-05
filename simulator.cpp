@@ -141,6 +141,7 @@ MIPSSimulator::MIPSSimulator(int32_t mode, string fileName)
 		Stack[i]=0; //initialize stack elements to 0
 	}
 	RegisterValues[29]=40396; //stack pointer at bottom element
+	RegisterValues[28]=100000000;
 	Mode=mode; //set mode
 	ifstream InputFile;
 	InputFile.open(fileName.c_str(),ios::in); //open file
@@ -237,13 +238,11 @@ void MIPSSimulator::preprocess()
 				j--;
 			}
 			tempString=""; //to store label name
-	//		int32_t isLabel=0; //label found
 			int32_t doneFlag=0; //label name complete
 			for(;j>=0;j--)
 			{
 				if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==0) //till label name characters are being found
 				{
-		//			isLabel=1;
 					tempString=current_instruction[j]+tempString;
 				}
 				else if(current_instruction[j]!=' ' && current_instruction[j]!='\t' && doneFlag==1) //if something found after name ends
@@ -251,11 +250,6 @@ void MIPSSimulator::preprocess()
 					cout<<"Error: Unexpected text before label name"<<endl;
 					ReportError();
 				}
-	/*			else if(isLabel==0) //i
-				{
-					cout<<"Error: Label name expected"<<endl;
-					ReportError();
-				}*/
 				else //name ended
 				{
 					doneFlag=1;
@@ -1044,15 +1038,15 @@ void MIPSSimulator::displayState()
 		printf("%6s[%2d]:%12d\t\t%5s[%2d]:%12d\n",Registers[i].c_str(),i,RegisterValues[i],Registers[i+16].c_str(),i+16,RegisterValues[i+16]);
 	}
 	cout<<endl<<"Memory:"<<endl<<endl; //display memory
-	printf("%11s%11s%8s\n","Address","Label","Value");
-	for(int32_t i=0;i<100;i++) //stack
+	cout<<"Address    Label   Value      Address    Label   Value    Address    Label   Value     Address    Label   Value     Address    Label   Value    "<<endl;
+	for(int32_t i=0;i<20;i++) //stack
 	{
-		printf("%11d%10s:%8d\n",current_address+4*i,"<Stack>",Stack[i]);
+		printf("%7d%8s:%8d\t%5d%8s:%8d\t%9d%8s:%8d\t%6d%8s:%8d\t%11d%8s:%8d\n",current_address+4*i,"<Stack>",Stack[i],current_address+4*(i+20),"<Stack>",Stack[i+20],current_address+4*(i+40),"<Stack>",Stack[i+40],current_address+4*(i+60),"<Stack>",Stack[i+60],current_address+4*(i+80),"<Stack>",Stack[i+80]);
 	}
 	current_address+=400;
 	for(int32_t i=0;i<Memory.size();i++) //labels
 	{
-		printf("%11d%10s:%8d\n",40400+4*i,Memory[i].label.c_str(),Memory[i].value);
+		printf("%7d%8s:%8d\n",40400+4*i,Memory[i].label.c_str(),Memory[i].value);
 	}
 	cout<<endl;
 }
@@ -1210,7 +1204,7 @@ int main()
 	string path;
 	int32_t mode;
 	cout<<"Program to simulate execution in MIPS Assembly language. Two modes are available:"<<endl<<"1. Step by Step Mode"<<endl<<"2. Execution Mode"<<endl<<endl;
-	cout<<"Enter the relative path of the input file and the mode:"<<endl;
+	cout<<endl<<"Enter the relative path of the input file and the mode:"<<endl;
 	cin>>path>>mode;
 	if(mode!=1 && mode!=2) //if mode is invalid
 	{
