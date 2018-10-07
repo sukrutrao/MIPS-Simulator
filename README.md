@@ -1,9 +1,8 @@
 # MIPS Simulator
 
-[![Build Status](https://travis-ci.com/GoodDeeds/MIPS-Simulator.svg?token=mYsgPy4zsL5qQDoHBaME&branch=master)](https://travis-ci.com/GoodDeeds/MIPS-Simulator)
+[![Build Status](https://travis-ci.com/GoodDeeds/MIPS-Simulator.svg?branch=master)](https://travis-ci.com/GoodDeeds/MIPS-Simulator)
 
-This program is a simulator to simulate execution of MIPS programs. It accepts the relative path
-of the MIPS code as the input, as well as the execution mode. There are two execution modes:
+This program is a simulator to simulate execution of MIPS programs. There are two execution modes supported:
 	
 * Step by Step Mode - in this mode, the program will run one instruction at a time, and
 display the state of the registers and memory after each instruction. The next instruction
@@ -14,18 +13,23 @@ The instructions supported are add, addi, sub, mul, and, andi, or, ori, nor, slt
 sw, j, and halt. halt is a new instruction, which when encountered causes the program to
 terminate.
 
-### Instructions to use the program
+## Setup and Usage
+### Prerequisites
+To build the program, a C++ compiler (such as g++) with C++11 support is required.
+
+### Building the program
 To compile the code, use the following command:
-```
-g++ simulator.cpp -o simulator -std=c++11
-```
-
-To run the code, use the following command:
-```
-./simulator
+```bash
+$ g++ simulator.cpp -o simulator --std=c++11
 ```
 
-### Guidelines
+### Running the simulator
+To run the simulator, use the following command:
+```bash
+$ ./simulator
+```
+
+## Guidelines
 * The program can contain .data and .text sections. There should be no text, apart from comments or blank lines, between the two sections
 * Comments are supported
 * The .data section can contain labels pertaining to a single word only. .space declarations are not allowed. Only integer data is supported.
@@ -51,3 +55,6 @@ errors in the flow of control after halt are ignored, except if there are any pr
 errors, such as redeclaration of data or text sections or labels, or invalid labels.
 * Overflows in arithmetic will not throw an error.
 * Except in displaying the address, all values used use the decimal number system.
+
+## License
+This program is provided under the [MIT License](LICENSE).
