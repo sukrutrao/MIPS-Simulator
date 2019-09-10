@@ -1,6 +1,6 @@
 # MIPS Simulator
 
-[![Build Status](https://travis-ci.com/GoodDeeds/MIPS-Simulator.svg?branch=master)](https://travis-ci.com/GoodDeeds/MIPS-Simulator)
+[![Build Status](https://travis-ci.com/sukrutrao/MIPS-Simulator.svg?branch=master)](https://travis-ci.com/sukrutrao/MIPS-Simulator)
 
 This program is a simulator to simulate execution of MIPS programs. There are two execution modes supported:
 	
